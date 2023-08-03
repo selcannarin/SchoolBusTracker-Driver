@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -18,6 +17,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SignInFragment : Fragment(R.layout.fragment_sign_in) {
+
     private val viewModel: AuthViewModel by activityViewModels()
     private var _binding: FragmentSignInBinding? = null
     private val binding get() = _binding
@@ -60,6 +60,7 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
             textViewForgotPassword.setOnClickListener {
                 findNavController().navigate(R.id.action_signInFragment_to_resetPasswordFragment)
             }
+
         }
     }
 
@@ -73,7 +74,9 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
                         }
                     }
                     is FirebaseEvents.Message -> {
-                        Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
+                        if (event.message == "login success") {
+                            findNavController().navigate(R.id.action_signInFragment_to_attendanceFragment)
+                        }
                     }
                     is FirebaseEvents.ErrorCode -> {
                         binding?.apply {

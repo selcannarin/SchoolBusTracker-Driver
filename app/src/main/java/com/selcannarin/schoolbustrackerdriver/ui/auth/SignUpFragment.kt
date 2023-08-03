@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -101,7 +100,9 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                         }
                     }
                     is FirebaseEvents.Message -> {
-                        Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
+                        if (event.message == "sign up success") {
+                            findNavController().navigate(R.id.action_signUpFragment_to_attendanceFragment)
+                        }
                     }
                     else -> {
                         Log.d(TAG, "listenToChannels: No event received so far")

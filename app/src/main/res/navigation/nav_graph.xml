@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_signInFragment_to_resetPasswordFragment"
             app:destination="@id/resetPasswordFragment" />
+        <action
+            android:id="@+id/action_signInFragment_to_attendanceFragment"
+            app:destination="@id/attendanceFragment" />
     </fragment>
 
     <fragment
@@ -26,6 +29,9 @@
         <action
             android:id="@+id/action_signUpFragment_to_signInFragment"
             app:destination="@id/signInFragment" />
+        <action
+            android:id="@+id/action_signUpFragment_to_attendanceFragment"
+            app:destination="@id/attendanceFragment" />
     </fragment>
     <fragment
         android:id="@+id/resetPasswordFragment"
@@ -35,6 +41,20 @@
             android:id="@+id/action_resetPasswordFragment_to_signInFragment"
             app:destination="@id/signInFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.selcannarin.schoolbustrackerdriver.ui.profile.ProfileFragment"
+        android:label="ProfileFragment" />
+    <fragment
+        android:id="@+id/parentsFragment"
+        android:name="com.selcannarin.schoolbustrackerdriver.ui.parents.ParentsFragment"
+        android:label="fragment_parents"
+        tools:layout="@layout/fragment_parents" />
+    <fragment
+        android:id="@+id/attendanceFragment"
+        android:name="com.selcannarin.schoolbustrackerdriver.ui.attendance.AttendanceFragment"
+        android:label="fragment_attendance"
+        tools:layout="@layout/fragment_attendance" />
 
     <!-- Diğer ekranları buraya ekleyebilirsiniz -->
 

@@ -3,10 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Selcan/AndroidStudioProjects/SchoolBusTrackerDriver/app/src/main/res/layout/activity_main.xml" value="0.19010416666666666" />
+        <entry key="..\:/Users/Selcan/AndroidStudioProjects/SchoolBusTrackerDriver/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/Selcan/AndroidStudioProjects/SchoolBusTrackerDriver/app/src/main/res/layout/fragment_attendance.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Selcan/AndroidStudioProjects/SchoolBusTrackerDriver/app/src/main/res/layout/fragment_parents.xml" value="0.19010416666666666" />
+        <entry key="..\:/Users/Selcan/AndroidStudioProjects/SchoolBusTrackerDriver/app/src/main/res/layout/fragment_profile.xml" value="0.15648148148148147" />
         <entry key="..\:/Users/Selcan/AndroidStudioProjects/SchoolBusTrackerDriver/app/src/main/res/layout/fragment_reset_password.xml" value="0.22" />
         <entry key="..\:/Users/Selcan/AndroidStudioProjects/SchoolBusTrackerDriver/app/src/main/res/layout/fragment_sign_in.xml" value="0.25" />
         <entry key="..\:/Users/Selcan/AndroidStudioProjects/SchoolBusTrackerDriver/app/src/main/res/layout/fragment_sign_up.xml" value="0.25" />
+        <entry key="..\:/Users/Selcan/AndroidStudioProjects/SchoolBusTrackerDriver/app/src/main/res/menu/bottom_menu.xml" value="0.16458333333333333" />
       </map>
     </option>
   </component>
