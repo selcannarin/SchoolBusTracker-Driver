@@ -6,6 +6,8 @@ data class Driver(
 
     val fullName: String = "",
 
-    val licensePlate: String = ""
+    val licensePlate: String = "",
+
+    val students: List<Int>? = null
 )
 
