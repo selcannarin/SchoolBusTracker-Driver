@@ -6,10 +6,14 @@ import com.selcannarin.schoolbustrackerdriver.data.datasource.auth.AuthDataSourc
 import com.selcannarin.schoolbustrackerdriver.data.datasource.auth.AuthDataSourceImpl
 import com.selcannarin.schoolbustrackerdriver.data.datasource.profile.ProfileDataSource
 import com.selcannarin.schoolbustrackerdriver.data.datasource.profile.ProfileDataSourceImpl
+import com.selcannarin.schoolbustrackerdriver.data.datasource.student.StudentDataSource
+import com.selcannarin.schoolbustrackerdriver.data.datasource.student.StudentDataSourceImpl
 import com.selcannarin.schoolbustrackerdriver.data.repository.auth.AuthRepository
 import com.selcannarin.schoolbustrackerdriver.data.repository.auth.AuthRepositoryImpl
 import com.selcannarin.schoolbustrackerdriver.data.repository.profile.ProfileRepository
 import com.selcannarin.schoolbustrackerdriver.data.repository.profile.ProfileRepositoryImpl
+import com.selcannarin.schoolbustrackerdriver.data.repository.student.StudentRepository
+import com.selcannarin.schoolbustrackerdriver.data.repository.student.StudentRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -62,6 +66,21 @@ object AppModule {
         provideDataSource: ProfileDataSource,
     ): ProfileRepository {
         return ProfileRepositoryImpl(provideDataSource)
+    }
+
+
+    @Singleton
+    @Provides
+    fun provideStudentDataSource(firestore: FirebaseFirestore): StudentDataSource {
+        return StudentDataSourceImpl(firestore)
+    }
+
+    @Singleton
+    @Provides
+    fun provideStudentRepository(
+        provideDataSource: StudentDataSource,
+    ): StudentRepository {
+        return StudentRepositoryImpl(provideDataSource)
     }
 
 
