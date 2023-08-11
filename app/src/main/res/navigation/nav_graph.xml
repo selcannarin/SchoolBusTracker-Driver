@@ -39,23 +39,48 @@
         android:label="ResetPasswordFragment">
         <action
             android:id="@+id/action_resetPasswordFragment_to_signInFragment"
-            app:destination="@id/signInFragment" />
+            app:destination="@+id/signInFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.selcannarin.schoolbustrackerdriver.ui.profile.ProfileFragment"
-        android:label="ProfileFragment" />
+        android:label="ProfileFragment"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profileFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+    </fragment>
     <fragment
-        android:id="@+id/parentsFragment"
-        android:name="com.selcannarin.schoolbustrackerdriver.ui.parents.ParentsFragment"
-        android:label="fragment_parents"
-        tools:layout="@layout/fragment_parents" />
+        android:id="@+id/locationFragment"
+        android:name="com.selcannarin.schoolbustrackerdriver.ui.location.LocationFragment"
+        android:label="fragment_location"
+        tools:layout="@layout/fragment_location" />
     <fragment
         android:id="@+id/attendanceFragment"
         android:name="com.selcannarin.schoolbustrackerdriver.ui.attendance.AttendanceFragment"
         android:label="fragment_attendance"
         tools:layout="@layout/fragment_attendance" />
-
-    <!-- Diğer ekranları buraya ekleyebilirsiniz -->
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.selcannarin.schoolbustrackerdriver.ui.profile.EditProfileFragment"
+        android:label="EditProfileFragment"
+        tools:layout="@layout/fragment_edit_profile">
+        <action
+            android:id="@+id/action_editProfileFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <argument
+            android:name="fullName"
+            app:argType="string" />
+        <argument
+            android:name="licensePlate"
+            app:argType="string" />
+        <argument
+            android:name="email"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
 
 </navigation>
