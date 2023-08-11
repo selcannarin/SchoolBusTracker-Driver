@@ -4,4 +4,5 @@
     <string name="parents">parents</string>
     <string name="attendance">attendance</string>
     <string name="profile">profile</string>
+    <string name="location">location</string>
 </resources>

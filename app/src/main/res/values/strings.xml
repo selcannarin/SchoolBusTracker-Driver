@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">SchoolBusTrackerDriver</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="parents">parents</string>
     <string name="attendance">attendance</string>
     <string name="profile">profile</string>
+    <string name="google_api_key">AIzaSyBnMeveXjPxGSxNTWQlVQ4SUUAYkNZ__oI</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="location">location</string>
 </resources>

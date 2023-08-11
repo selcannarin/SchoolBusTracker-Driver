@@ -5,9 +5,9 @@
         android:icon="@drawable/attendance_icon"
         android:title="@string/attendance" />
     <item
-        android:id="@+id/parents"
-        android:icon="@drawable/parent_icon"
-        android:title="@string/parents" />
+        android:id="@+id/location"
+        android:icon="@drawable/location_icon"
+        android:title="@string/location" />
     <item
         android:id="@+id/profile"
         android:icon="@drawable/profile_icon"
