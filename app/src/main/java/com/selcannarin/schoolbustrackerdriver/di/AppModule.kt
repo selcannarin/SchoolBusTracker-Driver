@@ -1,8 +1,8 @@
 package com.selcannarin.schoolbustrackerdriver.di
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.selcannarin.schoolbustrackerdriver.data.datasource.firebase.auth.AuthDataSource
-import com.selcannarin.schoolbustrackerdriver.data.datasource.firebase.auth.AuthDataSourceImpl
+import com.selcannarin.schoolbustrackerdriver.data.datasource.auth.AuthDataSource
+import com.selcannarin.schoolbustrackerdriver.data.datasource.auth.AuthDataSourceImpl
 import com.selcannarin.schoolbustrackerdriver.data.repository.auth.AuthRepository
 import com.selcannarin.schoolbustrackerdriver.data.repository.auth.AuthRepositoryImpl
 import dagger.Module
@@ -35,4 +35,5 @@ object AppModule {
     ): AuthRepository {
         return AuthRepositoryImpl(authenticator, firestore)
     }
+
 }

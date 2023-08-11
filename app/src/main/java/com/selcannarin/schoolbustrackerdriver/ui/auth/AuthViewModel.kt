@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
 import com.selcannarin.schoolbustrackerdriver.data.model.Driver
-import com.selcannarin.schoolbustrackerdriver.data.remote.FirebaseEvents
+import com.selcannarin.schoolbustrackerdriver.data.remote.AuthEvents
 import com.selcannarin.schoolbustrackerdriver.data.repository.auth.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -24,18 +24,20 @@ class AuthViewModel @Inject constructor(
     private val _firebaseUser = MutableLiveData<FirebaseUser?>()
     val currentUser get() = _firebaseUser
 
-    private val eventsChannel = Channel<FirebaseEvents>()
+    private val eventsChannel = Channel<AuthEvents>()
 
     val allEventsFlow = eventsChannel.receiveAsFlow()
 
     fun signInUser(email: String, password: String) = viewModelScope.launch {
         when {
             email.isEmpty() -> {
-                eventsChannel.send(FirebaseEvents.ErrorCode(1))
+                eventsChannel.send(AuthEvents.ErrorCode(1))
             }
+
             password.isEmpty() -> {
-                eventsChannel.send(FirebaseEvents.ErrorCode(2))
+                eventsChannel.send(AuthEvents.ErrorCode(2))
             }
+
             else -> {
                 actualSignInUser(email, password)
             }
@@ -45,14 +47,17 @@ class AuthViewModel @Inject constructor(
     fun signUpUser(email: String, password: String, confirmPass: String) = viewModelScope.launch {
         when {
             email.isEmpty() -> {
-                eventsChannel.send(FirebaseEvents.ErrorCode(1))
+                eventsChannel.send(AuthEvents.ErrorCode(1))
             }
+
             password.isEmpty() -> {
-                eventsChannel.send(FirebaseEvents.ErrorCode(2))
+                eventsChannel.send(AuthEvents.ErrorCode(2))
             }
+
             password != confirmPass -> {
-                eventsChannel.send(FirebaseEvents.ErrorCode(3))
+                eventsChannel.send(AuthEvents.ErrorCode(3))
             }
+
             else -> {
                 actualSignUpUser(email, password)
             }
@@ -62,9 +67,9 @@ class AuthViewModel @Inject constructor(
     fun saveUser(driver: Driver) = viewModelScope.launch {
         val success = repository.saveUser(driver)
         if (success) {
-            eventsChannel.send(FirebaseEvents.Message("User saved successfully"))
+            eventsChannel.send(AuthEvents.Message("User saved successfully"))
         } else {
-            eventsChannel.send(FirebaseEvents.Error("Failed to save user"))
+            eventsChannel.send(AuthEvents.Error("Failed to save user"))
         }
     }
 
@@ -74,12 +79,12 @@ class AuthViewModel @Inject constructor(
             val user = repository.signInWithEmailPassword(email, password)
             user?.let {
                 _firebaseUser.postValue(it)
-                eventsChannel.send(FirebaseEvents.Message("login success"))
+                eventsChannel.send(AuthEvents.Message("login success"))
             }
         } catch (e: Exception) {
             val error = e.toString().split(":").toTypedArray()
             Log.d(TAG, "signInUser: ${error[1]}")
-            eventsChannel.send(FirebaseEvents.Error(error[1]))
+            eventsChannel.send(AuthEvents.Error(error[1]))
         }
     }
 
@@ -88,12 +93,12 @@ class AuthViewModel @Inject constructor(
             val user = repository.signUpWithEmailPassword(email, password)
             user?.let {
                 _firebaseUser.postValue(it)
-                eventsChannel.send(FirebaseEvents.Message("sign up success"))
+                eventsChannel.send(AuthEvents.Message("sign up success"))
             }
         } catch (e: Exception) {
             val error = e.toString().split(":").toTypedArray()
             Log.d(TAG, "signInUser: ${error[1]}")
-            eventsChannel.send(FirebaseEvents.Error(error[1]))
+            eventsChannel.send(AuthEvents.Error(error[1]))
         }
     }
 
@@ -101,15 +106,15 @@ class AuthViewModel @Inject constructor(
         try {
             val user = repository.signOut()
             user?.let {
-                eventsChannel.send(FirebaseEvents.Message("logout failure"))
-            } ?: eventsChannel.send(FirebaseEvents.Message("sign out successful"))
+                eventsChannel.send(AuthEvents.Message("sign out failure"))
+            } ?: eventsChannel.send(AuthEvents.Message("sign out successful"))
 
             getCurrentUser()
 
         } catch (e: Exception) {
             val error = e.toString().split(":").toTypedArray()
             Log.d(TAG, "signInUser: ${error[1]}")
-            eventsChannel.send(FirebaseEvents.Error(error[1]))
+            eventsChannel.send(AuthEvents.Error(error[1]))
         }
     }
 
@@ -121,7 +126,7 @@ class AuthViewModel @Inject constructor(
     fun verifySendPasswordReset(email: String) {
         if (email.isEmpty()) {
             viewModelScope.launch {
-                eventsChannel.send(FirebaseEvents.ErrorCode(1))
+                eventsChannel.send(AuthEvents.ErrorCode(1))
             }
         } else {
             sendPasswordResetEmail(email)
@@ -133,14 +138,14 @@ class AuthViewModel @Inject constructor(
         try {
             val result = repository.sendResetPassword(email)
             if (result) {
-                eventsChannel.send(FirebaseEvents.Message("Reset email sent"))
+                eventsChannel.send(AuthEvents.Message("Reset email sent"))
             } else {
-                eventsChannel.send(FirebaseEvents.Error("Could not send password reset"))
+                eventsChannel.send(AuthEvents.Error("Could not send password reset"))
             }
         } catch (e: Exception) {
             val error = e.toString().split(":").toTypedArray()
             Log.d(TAG, "signInUser: ${error[1]}")
-            eventsChannel.send(FirebaseEvents.Error(error[1]))
+            eventsChannel.send(AuthEvents.Error(error[1]))
         }
     }
 

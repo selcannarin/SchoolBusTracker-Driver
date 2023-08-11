@@ -1,4 +1,4 @@
-package com.selcannarin.schoolbustrackerdriver.data.datasource.firebase.auth
+package com.selcannarin.schoolbustrackerdriver.data.datasource.auth
 
 import com.google.firebase.auth.FirebaseUser
 import com.selcannarin.schoolbustrackerdriver.data.model.Driver

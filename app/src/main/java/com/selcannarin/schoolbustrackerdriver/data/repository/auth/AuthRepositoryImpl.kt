@@ -2,7 +2,7 @@ package com.selcannarin.schoolbustrackerdriver.data.repository.auth
 
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
-import com.selcannarin.schoolbustrackerdriver.data.datasource.firebase.auth.AuthDataSource
+import com.selcannarin.schoolbustrackerdriver.data.datasource.auth.AuthDataSource
 import com.selcannarin.schoolbustrackerdriver.data.model.Driver
 import javax.inject.Inject
 

@@ -1,4 +1,4 @@
-package com.selcannarin.schoolbustrackerdriver.data.datasource.firebase.auth
+package com.selcannarin.schoolbustrackerdriver.data.datasource.auth
 
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -25,7 +25,6 @@ class AuthDataSourceImpl @Inject constructor(
             false
         }
     }
-
 
     override suspend fun signInWithEmailPassword(email: String, password: String): FirebaseUser? {
         Firebase.auth.signInWithEmailAndPassword(email, password).await()
