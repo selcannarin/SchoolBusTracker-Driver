@@ -3,8 +3,8 @@ package com.selcannarin.schoolbustrackerdriver.ui
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.navigation.findNavController
-import androidx.navigation.ui.setupWithNavController
 import com.selcannarin.schoolbustrackerdriver.R
 import com.selcannarin.schoolbustrackerdriver.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,41 +24,43 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupNavigation() {
         val navController = findNavController(R.id.navHostFragment)
-        binding.bottomNavigationView.setupWithNavController(navController)
 
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            val visibleDestinations = setOf(
-                R.id.profileFragment,
-                R.id.attendanceFragment,
-                R.id.parentsFragment
-            )
+        if (navController.currentDestination?.id == R.id.signInFragment) {
+            binding.bottomNavigationView.visibility = View.GONE
+        } else {
+            binding.bottomNavigationView.visibility = View.VISIBLE
 
-            binding.bottomNavigationView.visibility = if (destination.id in visibleDestinations) {
-                View.VISIBLE
-            } else {
-                View.GONE
-            }
         }
-        binding.bottomNavigationView.setupWithNavController(navController)
         binding.bottomNavigationView.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.attendance -> {
                     navController.navigate(R.id.attendanceFragment)
-                    true
+                    return@setOnItemSelectedListener true
                 }
-                R.id.parents -> {
-                    navController.navigate(R.id.parentsFragment)
-                    true
+
+                R.id.location -> {
+                    navController.navigate(R.id.locationFragment)
+                    return@setOnItemSelectedListener true
                 }
+
                 R.id.profile -> {
                     navController.navigate(R.id.profileFragment)
-                    true
+                    return@setOnItemSelectedListener true
                 }
+
                 else -> {
-                    navController.navigate(R.id.attendance)
-                    true
+                    return@setOnItemSelectedListener false
                 }
             }
         }
+    }
+
+    fun setBottomNavVisibilityGone() {
+        binding.bottomNavigationView.isVisible = false
+    }
+
+
+    fun setBottomNavVisibilityVisible() {
+        binding.bottomNavigationView.isVisible = true
     }
 }
