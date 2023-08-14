@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.selcannarin.schoolbustrackerdriver.R
 import com.selcannarin.schoolbustrackerdriver.data.model.Driver
 import com.selcannarin.schoolbustrackerdriver.data.model.Student
 import com.selcannarin.schoolbustrackerdriver.databinding.FragmentAttendanceBinding
@@ -21,7 +24,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class AttendanceFragment : Fragment() {
 
     private lateinit var binding: FragmentAttendanceBinding
-    lateinit var studentList: ArrayList<Student>
     lateinit var adapter: AttendanceAdapter
     private val authViewModel: AuthViewModel by viewModels()
     private val profileViewModel: ProfileViewModel by viewModels()
@@ -50,6 +52,9 @@ class AttendanceFragment : Fragment() {
 
         checkUser()
 
+        binding.fabAddStudent.setOnClickListener {
+            addStudent()
+        }
     }
 
     private fun checkUser() {
@@ -99,11 +104,19 @@ class AttendanceFragment : Fragment() {
 
             when (studentList) {
                 is UiState.Success -> {
+                    binding.progressCircular.visibility = View.GONE
                     val studentInfoList = studentList.data
                     initRecycler(studentInfoList)
                 }
 
-                else -> {}
+                is UiState.Loading -> {
+                    binding.progressCircular.visibility = View.VISIBLE
+                }
+
+                else -> {
+                    binding.progressCircular.visibility = View.GONE
+                    Toast.makeText(context, "No registered students!", Toast.LENGTH_SHORT).show()
+                }
             }
 
         }
@@ -113,6 +126,11 @@ class AttendanceFragment : Fragment() {
     private fun initRecycler(studentList: List<Student>) {
         adapter = AttendanceAdapter(studentList)
         binding.attendanceRv.adapter = adapter
+    }
+
+    private fun addStudent() {
+        findNavController().navigate(R.id.action_attendanceFragment_to_addStudentFragment)
+
     }
 }
 

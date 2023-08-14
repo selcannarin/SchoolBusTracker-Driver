@@ -6,9 +6,7 @@ data class Student(
 
     val student_name : String = "",
 
-    val student_status: Boolean = true,
-
     val parent_phone_number: Long = 0,
 
-    val student_adress: String = ""
+    val student_address: String = ""
 )

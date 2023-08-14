@@ -1,6 +1,7 @@
 package com.selcannarin.schoolbustrackerdriver.data.datasource.student
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.selcannarin.schoolbustrackerdriver.data.model.Driver
 import com.selcannarin.schoolbustrackerdriver.data.model.Student
 import com.selcannarin.schoolbustrackerdriver.util.UiState
 import kotlinx.coroutines.tasks.await
@@ -10,31 +11,65 @@ class StudentDataSourceImpl @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : StudentDataSource {
 
-    override suspend fun addStudent(student: Student, result: (UiState<String>) -> Unit) {
-        val studentData = hashMapOf(
-            "student_number" to student.student_number,
-            "student_name" to student.student_name,
-            "student_status" to student.student_status,
-            "parent_phone_number" to student.parent_phone_number,
-            "student_adress" to student.student_adress
-        )
+    override suspend fun addStudent(
+        user: Driver,
+        student: Student,
+        result: (UiState<String>) -> Unit
+    ) {
+        try {
+            val document = firestore.collection("drivers").document(user.email).get().await()
+            val driver = document.toObject(Driver::class.java)
 
-        firestore.collection("students")
-            .document(student.student_number.toString())
-            .set(studentData)
-            .addOnSuccessListener {
-                result(UiState.Success("Student added successfully"))
+            if (driver != null) {
+                val updatedStudents = if (driver.students == null) {
+                    listOf(student.student_number)
+                } else {
+                    driver.students!! + student.student_number
+                }
+
+                driver.students = updatedStudents
+
+                firestore.collection("drivers")
+                    .document(user.email)
+                    .set(driver)
+                    .addOnSuccessListener {
+                        val studentData = hashMapOf(
+                            "student_number" to student.student_number,
+                            "student_name" to student.student_name,
+                            "parent_phone_number" to student.parent_phone_number,
+                            "student_address" to student.student_address
+                        )
+
+                        firestore.collection("students")
+                            .document(student.student_number.toString())
+                            .set(studentData)
+                            .addOnSuccessListener {
+                                result(UiState.Success("Student added successfully"))
+                            }
+                            .addOnFailureListener { e ->
+                                result(
+                                    UiState.Failure(
+                                        e.localizedMessage ?: "Failed to add student"
+                                    )
+                                )
+                            }
+                    }
+                    .addOnFailureListener { e ->
+                        result(UiState.Failure(e.localizedMessage ?: "Failed to update driver"))
+                    }
+            } else {
+                result(UiState.Failure("Driver not found"))
             }
-            .addOnFailureListener { e ->
-                result(UiState.Failure(e.localizedMessage ?: "Failed to add student"))
-            }
+        } catch (e: Exception) {
+            result(UiState.Failure(e.localizedMessage ?: "An error occurred"))
+        }
     }
 
-    override suspend fun deleteStudent(user: Student, result: (UiState<String>) -> Unit) {
+    override suspend fun deleteStudent(student: Student, result: (UiState<String>) -> Unit) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun updateStudent(user: Student, result: (UiState<String>) -> Unit) {
+    override suspend fun updateStudent(student: Student, result: (UiState<String>) -> Unit) {
         TODO("Not yet implemented")
     }
 

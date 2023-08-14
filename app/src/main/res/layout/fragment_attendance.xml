@@ -8,6 +8,14 @@
     android:background="@color/light_orange"
     tools:context=".ui.attendance.AttendanceFragment">
 
+    <ProgressBar
+        android:id="@+id/progress_circular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/attendance_rv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/attendance_rv" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/attendance_rv"
@@ -52,7 +60,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_weight="0.3"
-            android:backgroundTint="#344955"
             android:clickable="true"
             android:src="@drawable/add_student_icon" />
     </LinearLayout>

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.selcannarin.schoolbustrackerdriver.data.model.Driver
 import com.selcannarin.schoolbustrackerdriver.data.model.Student
 import com.selcannarin.schoolbustrackerdriver.data.repository.student.StudentRepository
 import com.selcannarin.schoolbustrackerdriver.util.UiState
@@ -16,6 +17,10 @@ class AttendanceViewModel @Inject constructor(
     private val repository: StudentRepository
 ) : ViewModel() {
 
+    private val _addStudent = MutableLiveData<UiState<String>>()
+    val addStudent: LiveData<UiState<String>>
+        get() = _addStudent
+
     private val _studentList = MutableLiveData<UiState<List<Student>>>()
     val studentList: LiveData<UiState<List<Student>>>
         get() = _studentList
@@ -23,5 +28,10 @@ class AttendanceViewModel @Inject constructor(
     fun getStudentDetailsByNumbers(studentNumbers: List<Int>) = viewModelScope.launch {
         _studentList.value = UiState.Loading
         repository.getStudentDetailsByNumbers(studentNumbers) { _studentList.value = it }
+    }
+
+    fun addStudent(user: Driver, student: Student) = viewModelScope.launch {
+        _addStudent.value = UiState.Loading
+        repository.addStudent(user, student) { _addStudent.value = it }
     }
 }

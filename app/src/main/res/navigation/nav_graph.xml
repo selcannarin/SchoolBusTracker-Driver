@@ -62,7 +62,11 @@
         android:id="@+id/attendanceFragment"
         android:name="com.selcannarin.schoolbustrackerdriver.ui.attendance.AttendanceFragment"
         android:label="fragment_attendance"
-        tools:layout="@layout/fragment_attendance" />
+        tools:layout="@layout/fragment_attendance" >
+        <action
+            android:id="@+id/action_attendanceFragment_to_addStudentFragment"
+            app:destination="@id/addStudentFragment" />
+    </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
         android:name="com.selcannarin.schoolbustrackerdriver.ui.profile.EditProfileFragment"
@@ -81,6 +85,14 @@
             android:name="email"
             app:argType="string"
             app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/addStudentFragment"
+        android:name="com.selcannarin.schoolbustrackerdriver.ui.attendance.AddStudentFragment"
+        android:label="AddStudentFragment" >
+        <action
+            android:id="@+id/action_addStudentFragment_to_attendanceFragment"
+            app:destination="@id/attendanceFragment" />
     </fragment>
 
 </navigation>
