@@ -66,6 +66,9 @@
         <action
             android:id="@+id/action_attendanceFragment_to_addStudentFragment"
             app:destination="@id/addStudentFragment" />
+        <action
+            android:id="@+id/action_attendanceFragment_to_studentDetailFragment"
+            app:destination="@id/studentDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
@@ -94,5 +97,9 @@
             android:id="@+id/action_addStudentFragment_to_attendanceFragment"
             app:destination="@id/attendanceFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/studentDetailFragment"
+        android:name="com.selcannarin.schoolbustrackerdriver.ui.attendance.StudentDetailFragment"
+        android:label="StudentDetailFragment" />
 
 </navigation>
