@@ -29,7 +29,6 @@ class AttendanceFragment : Fragment() {
     private val profileViewModel: ProfileViewModel by viewModels()
     private val attendanceViewModel: AttendanceViewModel by viewModels()
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -125,9 +124,21 @@ class AttendanceFragment : Fragment() {
 
     private fun initRecycler(studentList: List<Student>) {
         adapter = AttendanceAdapter(studentList) { student ->
-            findNavController().navigate(R.id.action_attendanceFragment_to_studentDetailFragment)
+            goToStudentDetail(student)
         }
         binding.attendanceRv.adapter = adapter
+    }
+
+    private fun goToStudentDetail(student: Student) {
+        val name = student.student_name
+        val number = student.student_number
+        val parent_phone = student.parent_phone_number
+        val address = student.student_address
+
+        findNavController().navigate(
+            R.id.studentDetailFragment,
+            StudentDetailFragmentArgs(name, number, parent_phone, address).toBundle()
+        )
     }
 
     private fun addStudent() {

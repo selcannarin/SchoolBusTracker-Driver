@@ -21,6 +21,14 @@ class AttendanceViewModel @Inject constructor(
     val addStudent: LiveData<UiState<String>>
         get() = _addStudent
 
+    private val _deleteStudent = MutableLiveData<UiState<String>>()
+    val deleteStudent: LiveData<UiState<String>>
+        get() = _deleteStudent
+
+    private val _updateStudent = MutableLiveData<UiState<String>>()
+    val updateStudent: LiveData<UiState<String>>
+        get() = _updateStudent
+
     private val _studentList = MutableLiveData<UiState<List<Student>>>()
     val studentList: LiveData<UiState<List<Student>>>
         get() = _studentList
@@ -33,5 +41,15 @@ class AttendanceViewModel @Inject constructor(
     fun addStudent(user: Driver, student: Student) = viewModelScope.launch {
         _addStudent.value = UiState.Loading
         repository.addStudent(user, student) { _addStudent.value = it }
+    }
+
+    fun deleteStudent(user: Driver, student: Student) = viewModelScope.launch {
+        _deleteStudent.value = UiState.Loading
+        repository.deleteStudent(user, student) { _deleteStudent.value = it }
+    }
+
+    fun updateStudent(user: Driver, student: Student) = viewModelScope.launch {
+        _updateStudent.value = UiState.Loading
+        repository.updateStudent(user, student) { _updateStudent.value = it }
     }
 }

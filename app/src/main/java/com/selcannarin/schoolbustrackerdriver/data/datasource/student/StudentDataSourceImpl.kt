@@ -65,12 +65,103 @@ class StudentDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteStudent(student: Student, result: (UiState<String>) -> Unit) {
-        TODO("Not yet implemented")
+    override suspend fun deleteStudent(
+        user: Driver,
+        student: Student,
+        result: (UiState<String>) -> Unit
+    ) {
+        try {
+            val document = firestore.collection("drivers").document(user.email).get().await()
+            val driver = document.toObject(Driver::class.java)
+
+            if (driver != null) {
+                val updatedStudents = driver.students?.filter { it != student.student_number }
+
+                driver.students = updatedStudents
+
+                firestore.collection("drivers")
+                    .document(user.email)
+                    .set(driver)
+                    .addOnSuccessListener {
+                        firestore.collection("students")
+                            .document(student.student_number.toString())
+                            .delete()
+                            .addOnSuccessListener {
+                                result(UiState.Success("Student deleted successfully"))
+                            }
+                            .addOnFailureListener { e ->
+                                result(
+                                    UiState.Failure(
+                                        e.localizedMessage ?: "Failed to delete student"
+                                    )
+                                )
+                            }
+                    }
+                    .addOnFailureListener { e ->
+                        result(UiState.Failure(e.localizedMessage ?: "Failed to update driver"))
+                    }
+            } else {
+                result(UiState.Failure("Driver not found"))
+            }
+        } catch (e: Exception) {
+            result(UiState.Failure(e.localizedMessage ?: "An error occurred"))
+        }
     }
 
-    override suspend fun updateStudent(student: Student, result: (UiState<String>) -> Unit) {
-        TODO("Not yet implemented")
+    override suspend fun updateStudent(
+        user: Driver,
+        student: Student,
+        result: (UiState<String>) -> Unit
+    ) {
+        try {
+            val document = firestore.collection("drivers").document(user.email).get().await()
+            val driver = document.toObject(Driver::class.java)
+
+            if (driver != null) {
+                val updatedStudents = driver.students?.map {
+                    if (it == student.student_number) {
+                        student.student_number
+                    } else {
+                        it
+                    }
+                }
+
+                driver.students = updatedStudents
+
+                firestore.collection("drivers")
+                    .document(user.email)
+                    .set(driver)
+                    .addOnSuccessListener {
+                        val studentData = hashMapOf(
+                            "student_number" to student.student_number,
+                            "student_name" to student.student_name,
+                            "parent_phone_number" to student.parent_phone_number,
+                            "student_address" to student.student_address
+                        )
+
+                        firestore.collection("students")
+                            .document(student.student_number.toString())
+                            .set(studentData)
+                            .addOnSuccessListener {
+                                result(UiState.Success("Student updated successfully"))
+                            }
+                            .addOnFailureListener { e ->
+                                result(
+                                    UiState.Failure(
+                                        e.localizedMessage ?: "Failed to update student"
+                                    )
+                                )
+                            }
+                    }
+                    .addOnFailureListener { e ->
+                        result(UiState.Failure(e.localizedMessage ?: "Failed to update driver"))
+                    }
+            } else {
+                result(UiState.Failure("Driver not found"))
+            }
+        } catch (e: Exception) {
+            result(UiState.Failure(e.localizedMessage ?: "An error occurred"))
+        }
     }
 
     override suspend fun getStudentDetailsByNumbers(

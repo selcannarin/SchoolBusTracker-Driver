@@ -8,9 +8,9 @@ interface StudentDataSource {
 
     suspend fun addStudent(user: Driver, student: Student, result: (UiState<String>) -> Unit)
 
-    suspend fun deleteStudent(student: Student, result: (UiState<String>) -> Unit)
+    suspend fun deleteStudent(user: Driver, student: Student, result: (UiState<String>) -> Unit)
 
-    suspend fun updateStudent(student: Student, result: (UiState<String>) -> Unit)
+    suspend fun updateStudent(user: Driver, student: Student, result: (UiState<String>) -> Unit)
 
     suspend fun getStudentDetailsByNumbers(
         studentNumbers: List<Int>,

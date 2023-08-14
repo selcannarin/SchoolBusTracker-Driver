@@ -10,16 +10,28 @@ class StudentRepositoryImpl @Inject constructor(
     private val studentDataSource: StudentDataSource
 ) : StudentRepository {
 
-    override suspend fun addStudent(user: Driver, student: Student, result: (UiState<String>) -> Unit) {
+    override suspend fun addStudent(
+        user: Driver,
+        student: Student,
+        result: (UiState<String>) -> Unit
+    ) {
         return studentDataSource.addStudent(user, student, result)
     }
 
-    override suspend fun deleteStudent(student: Student, result: (UiState<String>) -> Unit) {
-        return studentDataSource.deleteStudent(student, result)
+    override suspend fun deleteStudent(
+        user: Driver,
+        student: Student,
+        result: (UiState<String>) -> Unit
+    ) {
+        return studentDataSource.deleteStudent(user, student, result)
     }
 
-    override suspend fun updateStudent(student: Student, result: (UiState<String>) -> Unit) {
-        return studentDataSource.updateStudent(student, result)
+    override suspend fun updateStudent(
+        user: Driver,
+        student: Student,
+        result: (UiState<String>) -> Unit
+    ) {
+        return studentDataSource.updateStudent(user, student, result)
     }
 
     override suspend fun getStudentDetailsByNumbers(

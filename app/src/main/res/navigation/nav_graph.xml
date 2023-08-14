@@ -62,7 +62,7 @@
         android:id="@+id/attendanceFragment"
         android:name="com.selcannarin.schoolbustrackerdriver.ui.attendance.AttendanceFragment"
         android:label="fragment_attendance"
-        tools:layout="@layout/fragment_attendance" >
+        tools:layout="@layout/fragment_attendance">
         <action
             android:id="@+id/action_attendanceFragment_to_addStudentFragment"
             app:destination="@id/addStudentFragment" />
@@ -92,7 +92,7 @@
     <fragment
         android:id="@+id/addStudentFragment"
         android:name="com.selcannarin.schoolbustrackerdriver.ui.attendance.AddStudentFragment"
-        android:label="AddStudentFragment" >
+        android:label="AddStudentFragment">
         <action
             android:id="@+id/action_addStudentFragment_to_attendanceFragment"
             app:destination="@id/attendanceFragment" />
@@ -100,6 +100,26 @@
     <fragment
         android:id="@+id/studentDetailFragment"
         android:name="com.selcannarin.schoolbustrackerdriver.ui.attendance.StudentDetailFragment"
-        android:label="StudentDetailFragment" />
+        android:label="StudentDetailFragment">
+        <argument
+            android:name="student_name"
+            android:defaultValue=''
+            app:argType="string" />
+        <argument
+            android:name="student_number"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <argument
+            android:name="student_parent_phone"
+            android:defaultValue="0L"
+            app:argType="long" />
+        <argument
+            android:name="student_address"
+            android:defaultValue=''
+            app:argType="string" />
+        <action
+            android:id="@+id/action_studentDetailFragment_to_attendanceFragment"
+            app:destination="@id/attendanceFragment" />
+    </fragment>
 
 </navigation>
