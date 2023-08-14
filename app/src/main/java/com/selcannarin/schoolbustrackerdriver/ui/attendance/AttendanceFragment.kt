@@ -124,7 +124,9 @@ class AttendanceFragment : Fragment() {
     }
 
     private fun initRecycler(studentList: List<Student>) {
-        adapter = AttendanceAdapter(studentList)
+        adapter = AttendanceAdapter(studentList) { student ->
+            findNavController().navigate(R.id.action_attendanceFragment_to_studentDetailFragment)
+        }
         binding.attendanceRv.adapter = adapter
     }
 

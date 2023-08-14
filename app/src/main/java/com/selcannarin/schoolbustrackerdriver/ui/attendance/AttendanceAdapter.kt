@@ -2,12 +2,15 @@ package com.selcannarin.schoolbustrackerdriver.ui.attendance
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.selcannarin.schoolbustrackerdriver.R
 import com.selcannarin.schoolbustrackerdriver.data.model.Student
 import com.selcannarin.schoolbustrackerdriver.databinding.StudentAttendanceCardViewBinding
 
 class AttendanceAdapter(
-    private val attendanceList: List<Student>
+    private val attendanceList: List<Student>,
+    private val onStudentDetailClick: (student: Student) -> Unit
 ) : RecyclerView.Adapter<AttendanceAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -22,6 +25,9 @@ class AttendanceAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val student = attendanceList[position]
         holder.bind(student)
+        holder.itemView.findViewById<ImageView>(R.id.imageView_student_detail) .setOnClickListener {
+            onStudentDetailClick(student)
+        }
     }
 
     override fun getItemCount(): Int {
