@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.firebase.ktx.Firebase
@@ -19,6 +20,8 @@ import com.selcannarin.schoolbustrackerdriver.R
 import com.selcannarin.schoolbustrackerdriver.data.model.Driver
 import com.selcannarin.schoolbustrackerdriver.databinding.FragmentEditProfileBinding
 import com.selcannarin.schoolbustrackerdriver.ui.MainActivity
+import com.selcannarin.schoolbustrackerdriver.ui.auth.AuthViewModel
+import com.selcannarin.schoolbustrackerdriver.util.UiState
 import com.selcannarin.schoolbustrackerdriver.util.loadUrl
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,8 +32,10 @@ class EditProfileFragment : Fragment() {
     private val PICK_IMAGE_REQUEST = 1
     private val PICK_FILE_REQUEST = 2
     private val profileViewModel: ProfileViewModel by viewModels()
+    private val authViewModel: AuthViewModel by viewModels()
     private var selectedImageUri: Uri? = null
     private var selectedFileUri: Uri? = null
+    private val driverLiveData: MutableLiveData<Driver> = MutableLiveData()
     private val args: EditProfileFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -83,26 +88,55 @@ class EditProfileFragment : Fragment() {
         }
 
         binding.imageViewSaveProfile.setOnClickListener {
-            val fullName = binding.editTextUserProfileName.text.toString()
-            val email = binding.textViewUserEmail.text.toString()
-            val licensePlate = binding.editTextLicensePlate.text.toString()
 
-            val updatedDriver = Driver(email, fullName, licensePlate)
+            driverLiveData.observe(viewLifecycleOwner) { driver ->
+                val userEmail = driver.email
+                val students = driver.students
 
-            profileViewModel.editDriver(updatedDriver)
+                val fullName = binding.editTextUserProfileName.text.toString()
+                val licensePlate = binding.editTextLicensePlate.text.toString()
 
-            if (selectedImageUri != null) {
-                showPhotoConfirmationDialog(updatedDriver, selectedImageUri!!)
+                val updatedDriver = Driver(userEmail, fullName, licensePlate, students)
+
+                profileViewModel.editDriver(updatedDriver)
+
+                if (selectedImageUri != null) {
+                    showPhotoConfirmationDialog(updatedDriver, selectedImageUri!!)
+                }
+
+                if (selectedFileUri != null) {
+                    showFileConfirmationDialog(updatedDriver, selectedFileUri!!)
+                }
             }
-
-            if (selectedFileUri != null) {
-                showFileConfirmationDialog(updatedDriver, selectedFileUri!!)
-            }
-
             findNavController().navigate(R.id.action_editProfileFragment_to_profileFragment)
         }
 
     }
+
+    private fun checkUser() {
+        authViewModel.getCurrentUser()
+        authViewModel.currentUser.observe(viewLifecycleOwner) { user ->
+            if (user != null) {
+                val email = user.email ?: ""
+                val fullName = ""
+                val licensePlate = ""
+                val students: List<Int> = emptyList()
+                profileViewModel.getDriver(Driver(email, fullName, licensePlate, students))
+                profileViewModel.driver.observe(viewLifecycleOwner) { driverState ->
+                    when (driverState) {
+                        is UiState.Success -> {
+                            val driver = driverState.data
+                            driverLiveData.value = driver
+                        }
+
+                        else -> {}
+                    }
+
+                }
+            }
+        }
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
