@@ -2,6 +2,7 @@ package com.selcannarin.schoolbustrackerdriver.ui.attendance
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.selcannarin.schoolbustrackerdriver.R
@@ -25,7 +26,13 @@ class AttendanceAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val student = attendanceList[position]
         holder.bind(student)
-        holder.itemView.findViewById<ImageView>(R.id.imageView_student_detail) .setOnClickListener {
+        // CheckBox'ın durumunu güncellemek ve öğrenci verisini işlemek için OnClickListener ekle
+        holder.itemView.findViewById<CheckBox>(R.id.attendance_checkBox)
+            .setOnCheckedChangeListener { _, isChecked ->
+                student.isPresent = isChecked
+            }
+
+        holder.itemView.findViewById<ImageView>(R.id.imageView_student_detail).setOnClickListener {
             onStudentDetailClick(student)
         }
     }
@@ -40,6 +47,8 @@ class AttendanceAdapter(
             binding.apply {
                 textViewStudentName.text = student.student_name
                 textViewStudentNumber.text = student.student_number.toString()
+
+                attendanceCheckBox.isChecked = student.isPresent
             }
         }
     }

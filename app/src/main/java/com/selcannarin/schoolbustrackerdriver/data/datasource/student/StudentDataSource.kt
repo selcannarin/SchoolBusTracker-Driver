@@ -17,4 +17,16 @@ interface StudentDataSource {
         result: (UiState<List<Student>>) -> Unit
     )
 
+    suspend fun saveGoingAttendanceList(
+        userEmail: String,
+        studentNumbers: List<Int>,
+        result: (UiState<List<Int>>) -> Unit
+    )
+
+    suspend fun saveReturnAttendanceList(
+        userEmail: String,
+        studentNumbers: List<Int>,
+        result: (UiState<List<Int>>) -> Unit
+    )
+
 }

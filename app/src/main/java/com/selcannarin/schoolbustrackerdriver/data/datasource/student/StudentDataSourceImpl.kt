@@ -5,6 +5,7 @@ import com.selcannarin.schoolbustrackerdriver.data.model.Driver
 import com.selcannarin.schoolbustrackerdriver.data.model.Student
 import com.selcannarin.schoolbustrackerdriver.util.UiState
 import kotlinx.coroutines.tasks.await
+import java.util.Calendar
 import javax.inject.Inject
 
 class StudentDataSourceImpl @Inject constructor(
@@ -188,5 +189,83 @@ class StudentDataSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun saveGoingAttendanceList(
+        userEmail: String,
+        studentNumbers: List<Int>,
+        result: (UiState<List<Int>>) -> Unit
+    ) {
+        val attendanceCollection = firestore.collection("attendance")
+        val userAttendanceDoc = attendanceCollection.document(userEmail)
+
+        val currentDate = Calendar.getInstance().time
+        val day = currentDate.date
+        val month = currentDate.month
+        val year = currentDate.year
+
+        val attendanceDate = "${day}_${month}_${year}"
+
+        val goingAttendanceData = hashMapOf(
+            "timestamp" to currentDate,
+            "students" to studentNumbers
+        )
+
+        val goingCollection = userAttendanceDoc.collection("going")
+        val attendanceDoc = goingCollection.document(attendanceDate)
+
+        try {
+            attendanceDoc.get().await().let { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    attendanceDoc.delete().await()
+                }
+
+                goingCollection.document(attendanceDate).set(goingAttendanceData).await()
+
+                result(UiState.Success(studentNumbers))
+            }
+        } catch (e: Exception) {
+            result(UiState.Failure(e.localizedMessage ?: "Failed to save attendance"))
+        }
+    }
+
+
+    override suspend fun saveReturnAttendanceList(
+        userEmail: String,
+        studentNumbers: List<Int>,
+        result: (UiState<List<Int>>) -> Unit
+    ) {
+        val attendanceCollection = firestore.collection("attendance")
+        val userAttendanceDoc = attendanceCollection.document(userEmail)
+
+        val currentDate = Calendar.getInstance().time
+        val day = currentDate.date
+        val month = currentDate.month
+        val year = currentDate.year
+
+        val attendanceDate = "${day}_${month}_${year}"
+
+        val returnAttendanceData = hashMapOf(
+            "timestamp" to currentDate,
+            "students" to studentNumbers
+        )
+
+        val returnCollection = userAttendanceDoc.collection("return")
+        val attendanceDoc = returnCollection.document(attendanceDate)
+
+        try {
+            attendanceDoc.get().await().let { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+
+                    attendanceDoc.delete().await()
+                }
+
+
+                returnCollection.document(attendanceDate).set(returnAttendanceData).await()
+
+                result(UiState.Success(studentNumbers))
+            }
+        } catch (e: Exception) {
+            result(UiState.Failure(e.localizedMessage ?: "Failed to save attendance"))
+        }
+    }
 
 }

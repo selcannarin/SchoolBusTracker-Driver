@@ -27,7 +27,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_container"
+        app:layout_constraintTop_toBottomOf="@+id/button_group"
         app:layout_constraintVertical_bias="0.5" />
 
     <LinearLayout
@@ -64,39 +64,44 @@
             android:src="@drawable/add_student_icon" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/button_container"
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/button_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/attendance_rv"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp"
+        app:checkedButton="@+id/button_going"
+        app:layout_constraintBottom_toTopOf="@id/attendance_rv"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5"
-        app:layout_constraintVertical_chainStyle="spread_inside">
+        app:singleSelection="true">
 
-        <Button
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/button_going"
-            android:layout_width="wrap_content"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
             android:layout_weight="1"
-            android:backgroundTint="@color/white"
             android:text="GOING"
-            android:textColor="@color/black" />
+            app:backgroundTint="@color/white"
+            app:checkedIcon="@null"
+            app:cornerRadius="8dp"
+            app:iconTint="@null"
+            app:rippleColor="@color/black"
+            app:strokeColor="@color/black" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/button_return"
-            android:layout_width="wrap_content"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
             android:layout_weight="1"
-            android:backgroundTint="@color/white"
             android:text="RETURN"
-            android:textColor="@color/black" />
-    </LinearLayout>
-
+            app:backgroundTint="@color/white"
+            app:checkedIcon="@null"
+            app:cornerRadius="8dp"
+            app:iconTint="@null"
+            app:rippleColor="@color/black"
+            app:strokeColor="@color/black" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

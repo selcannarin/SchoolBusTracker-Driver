@@ -33,6 +33,14 @@ class AttendanceViewModel @Inject constructor(
     val studentList: LiveData<UiState<List<Student>>>
         get() = _studentList
 
+    private val _returnAttendanceList = MutableLiveData<UiState<List<Int>>>()
+    val returnAttendanceList: LiveData<UiState<List<Int>>>
+        get() = _returnAttendanceList
+
+    private val _goingAttendanceList = MutableLiveData<UiState<List<Int>>>()
+    val goingAttendanceList: LiveData<UiState<List<Int>>>
+        get() = _goingAttendanceList
+
     fun getStudentDetailsByNumbers(studentNumbers: List<Int>) = viewModelScope.launch {
         _studentList.value = UiState.Loading
         repository.getStudentDetailsByNumbers(studentNumbers) { _studentList.value = it }
@@ -51,5 +59,25 @@ class AttendanceViewModel @Inject constructor(
     fun updateStudent(user: Driver, student: Student) = viewModelScope.launch {
         _updateStudent.value = UiState.Loading
         repository.updateStudent(user, student) { _updateStudent.value = it }
+    }
+
+    fun saveGoingAttendanceList(
+        userEmail: String,
+        studentNumbers: List<Int>
+    ) = viewModelScope.launch {
+        _goingAttendanceList.value = UiState.Loading
+        repository.saveGoingAttendanceList(userEmail, studentNumbers) {
+            _goingAttendanceList.value = it
+        }
+    }
+
+    fun saveReturnAttendanceList(
+        userEmail: String,
+        studentNumbers: List<Int>
+    ) = viewModelScope.launch {
+        _returnAttendanceList.value = UiState.Loading
+        repository.saveReturnAttendanceList(userEmail, studentNumbers) {
+            _returnAttendanceList.value = it
+        }
     }
 }

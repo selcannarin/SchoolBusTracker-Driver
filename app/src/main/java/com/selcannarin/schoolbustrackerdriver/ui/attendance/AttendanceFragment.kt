@@ -1,13 +1,17 @@
 package com.selcannarin.schoolbustrackerdriver.ui.attendance
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.selcannarin.schoolbustrackerdriver.R
@@ -20,6 +24,7 @@ import com.selcannarin.schoolbustrackerdriver.ui.profile.ProfileViewModel
 import com.selcannarin.schoolbustrackerdriver.util.UiState
 import dagger.hilt.android.AndroidEntryPoint
 
+
 @AndroidEntryPoint
 class AttendanceFragment : Fragment() {
 
@@ -28,7 +33,7 @@ class AttendanceFragment : Fragment() {
     private val authViewModel: AuthViewModel by viewModels()
     private val profileViewModel: ProfileViewModel by viewModels()
     private val attendanceViewModel: AttendanceViewModel by viewModels()
-
+    private val driverLiveData: MutableLiveData<Driver> = MutableLiveData()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -50,6 +55,7 @@ class AttendanceFragment : Fragment() {
         toolbar?.title = "Student Attendance"
 
         checkUser()
+        saveStudentAttendanceList()
 
         binding.fabAddStudent.setOnClickListener {
             addStudent()
@@ -69,7 +75,9 @@ class AttendanceFragment : Fragment() {
                     when (driverState) {
                         is UiState.Success -> {
                             val driver = driverState.data
+                            driverLiveData.value = driver
                             getStudentNumberList(driver)
+
                         }
 
                         else -> {}
@@ -145,8 +153,104 @@ class AttendanceFragment : Fragment() {
         findNavController().navigate(R.id.action_attendanceFragment_to_addStudentFragment)
 
     }
-}
 
+    private fun onGoingButtonClicked() {
+        driverLiveData.observe(viewLifecycleOwner) { driver ->
+            val userEmail = driver.email
+            val selectedStudents = getStudentAttendanceList()
+            attendanceViewModel.saveGoingAttendanceList(userEmail, selectedStudents)
+            attendanceViewModel.goingAttendanceList.observe(viewLifecycleOwner) { goingAttendanceList ->
+                when (goingAttendanceList) {
+                    is UiState.Success -> {
+                        val studentNumberList = goingAttendanceList.data
+                        Toast.makeText(
+                            requireContext(),
+                            "Going Attendance List saved successfully!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        Log.e("going", studentNumberList.toString())
+                        clearCheckBoxes()
+                    }
+
+                    else -> {}
+                }
+            }
+        }
+
+    }
+
+    private fun onReturnButtonClicked() {
+        driverLiveData.observe(viewLifecycleOwner) { driver ->
+            val userEmail = driver.email
+            val selectedStudents = getStudentAttendanceList()
+            attendanceViewModel.saveReturnAttendanceList(userEmail, selectedStudents)
+            attendanceViewModel.returnAttendanceList.observe(viewLifecycleOwner) { returnAttendanceList ->
+                when (returnAttendanceList) {
+                    is UiState.Success -> {
+                        val studentNumberList = returnAttendanceList.data
+                        Toast.makeText(
+                            requireContext(),
+                            "Return Attendance List saved successfully!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        Log.e("return", studentNumberList.toString())
+                        clearCheckBoxes()
+                    }
+
+                    else -> {}
+                }
+            }
+        }
+
+    }
+
+    private fun clearCheckBoxes() {
+        for (i in 0 until binding.attendanceRv.adapter?.itemCount!!) {
+            val viewHolder =
+                binding.attendanceRv.findViewHolderForAdapterPosition(i) as AttendanceAdapter.ViewHolder
+            val checkBox = viewHolder.itemView.findViewById<CheckBox>(R.id.attendance_checkBox)
+            checkBox.isChecked = false
+        }
+    }
+
+    private fun getStudentAttendanceList(): List<Int> {
+        val selectedStudents = mutableListOf<Int>()
+
+        val itemCount = binding.attendanceRv.adapter?.itemCount ?: 0
+        for (i in 0 until itemCount) {
+            val viewHolder =
+                binding.attendanceRv.findViewHolderForAdapterPosition(i) as AttendanceAdapter.ViewHolder
+            val checkBox = viewHolder.itemView.findViewById<CheckBox>(R.id.attendance_checkBox)
+
+            if (checkBox.isChecked) {
+                val studentNumberTextView =
+                    viewHolder.itemView.findViewById<TextView>(R.id.textView_student_number)
+                val studentNumber = studentNumberTextView.text.toString().toInt()
+                selectedStudents.add(studentNumber)
+            }
+        }
+        return selectedStudents
+    }
+
+    private fun saveStudentAttendanceList() {
+        binding.buttonSave.setOnClickListener {
+
+            val isGoingChecked = binding.buttonGoing.isChecked
+            val isReturnChecked = binding.buttonReturn.isChecked
+
+            if (isGoingChecked || isReturnChecked) {
+                if (isGoingChecked) {
+                    onGoingButtonClicked()
+                }
+                if (isReturnChecked) {
+                    onReturnButtonClicked()
+                }
+            }
+        }
+    }
+
+
+}
 
 
 

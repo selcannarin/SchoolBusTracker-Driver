@@ -40,4 +40,20 @@ class StudentRepositoryImpl @Inject constructor(
     ) {
         return studentDataSource.getStudentDetailsByNumbers(studentNumbers, result)
     }
+
+    override suspend fun saveGoingAttendanceList(
+        userEmail: String,
+        studentNumbers: List<Int>,
+        result: (UiState<List<Int>>) -> Unit
+    ) {
+        return studentDataSource.saveGoingAttendanceList(userEmail, studentNumbers, result)
+    }
+
+    override suspend fun saveReturnAttendanceList(
+        userEmail: String,
+        studentNumbers: List<Int>,
+        result: (UiState<List<Int>>) -> Unit
+    ) {
+        return studentDataSource.saveReturnAttendanceList(userEmail, studentNumbers, result)
+    }
 }
