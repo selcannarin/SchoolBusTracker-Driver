@@ -55,12 +55,13 @@ class EditProfileFragment : Fragment() {
         val imageref =
             Firebase.storage.reference.child("photos/${email}.jpg")
         imageref.downloadUrl.addOnSuccessListener { Uri ->
-
             val imageURL = Uri.toString()
             binding.imageViewUserImage.loadUrl(imageURL)
         }
 
+        checkUser()
         initListener()
+
         return binding.root
 
     }
@@ -71,6 +72,8 @@ class EditProfileFragment : Fragment() {
         (activity as MainActivity).setBottomNavVisibilityGone()
         val toolbar = (activity as AppCompatActivity).supportActionBar
         toolbar?.title = "Edit Profile"
+
+
     }
 
     fun initListener() {
