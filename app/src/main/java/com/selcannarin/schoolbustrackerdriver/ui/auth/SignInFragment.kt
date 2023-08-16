@@ -14,8 +14,10 @@ import androidx.navigation.fragment.findNavController
 import com.selcannarin.schoolbustrackerdriver.R
 import com.selcannarin.schoolbustrackerdriver.data.remote.AuthEvents
 import com.selcannarin.schoolbustrackerdriver.databinding.FragmentSignInBinding
+import com.selcannarin.schoolbustrackerdriver.ui.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+
 
 @AndroidEntryPoint
 class SignInFragment : Fragment(R.layout.fragment_sign_in) {
@@ -110,6 +112,12 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        (requireActivity() as MainActivity).setBottomNavVisibilityGone()
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
