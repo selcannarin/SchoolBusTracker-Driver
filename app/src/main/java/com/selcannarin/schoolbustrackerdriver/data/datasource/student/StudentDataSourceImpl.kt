@@ -268,4 +268,30 @@ class StudentDataSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun getFCMTokenByStudentNumber(
+        studentNumber: Int,
+        result: (UiState<String?>) -> Unit
+    ) {
+        try {
+            val querySnapshot = firestore.collection("parents")
+                .whereEqualTo("student_number", studentNumber)
+                .get()
+                .await()
+
+            for (document in querySnapshot.documents) {
+                val token = document.getString("fcm_token")
+                if (token != null) {
+                    result(UiState.Success(token))
+                    return
+                }
+            }
+            result(UiState.Success(null))
+        } catch (e: Exception) {
+            val errorMessage = "Failed to get FCM Token: ${e.message}"
+            result(UiState.Failure(errorMessage))
+            println(errorMessage)
+        }
+    }
+
+
 }

@@ -7,6 +7,35 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:811487567522:android:7e78b64e89e0ed66e6c1fb",
+        "android_client_info": {
+          "package_name": "com.example.schoolbustrackerparent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "811487567522-11c5dm80i9uit6r3olpposnflbgr9kae.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZItm8eY3RhMnsvO7tr3YwCgl5begeThM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "811487567522-11c5dm80i9uit6r3olpposnflbgr9kae.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:811487567522:android:6a546e8ca88db6a3e6c1fb",
         "android_client_info": {
           "package_name": "com.selcannarin.schoolbustrackerdriver"

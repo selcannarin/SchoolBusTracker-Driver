@@ -56,4 +56,11 @@ class StudentRepositoryImpl @Inject constructor(
     ) {
         return studentDataSource.saveReturnAttendanceList(userEmail, studentNumbers, result)
     }
+
+    override suspend fun getFCMTokenByStudentNumber(
+        studentNumber: Int,
+        result: (UiState<String?>) -> Unit
+    ) {
+        return studentDataSource.getFCMTokenByStudentNumber(studentNumber, result)
+    }
 }

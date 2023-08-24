@@ -18,6 +18,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SchoolBusTrackerDriver"
         tools:targetApi="31">
+        <service
+            android:name=".data.notification.MyFirebaseMessagingService"
+            android:permission="com.google.android.c2dm.permission.SEND"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".ui.SplashActivity"
             android:exported="true">

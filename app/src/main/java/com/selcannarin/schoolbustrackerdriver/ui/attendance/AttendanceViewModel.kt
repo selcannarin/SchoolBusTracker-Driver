@@ -41,6 +41,10 @@ class AttendanceViewModel @Inject constructor(
     val goingAttendanceList: LiveData<UiState<List<Int>>>
         get() = _goingAttendanceList
 
+    private val _getFCMToken = MutableLiveData<UiState<String?>>()
+    val getFCMToken: LiveData<UiState<String?>>
+        get() =_getFCMToken
+
     fun getStudentDetailsByNumbers(studentNumbers: List<Int>) = viewModelScope.launch {
         _studentList.value = UiState.Loading
         repository.getStudentDetailsByNumbers(studentNumbers) { _studentList.value = it }
@@ -79,5 +83,10 @@ class AttendanceViewModel @Inject constructor(
         repository.saveReturnAttendanceList(userEmail, studentNumbers) {
             _returnAttendanceList.value = it
         }
+    }
+
+    fun getFCMTokenByStudentNumber(studentNumber: Int) = viewModelScope.launch {
+        _getFCMToken.value = UiState.Loading
+        repository.getFCMTokenByStudentNumber(studentNumber) { _getFCMToken.value = it }
     }
 }

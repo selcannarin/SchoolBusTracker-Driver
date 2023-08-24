@@ -72,16 +72,30 @@ class ProfileDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun uploadFile(user: Driver, fileUri: Uri, result: (UiState<String>) -> Unit) {
-        val fileRef =
-            storage.reference.child("files/${user.email}/${System.currentTimeMillis()}_${fileUri.lastPathSegment}")
+    override suspend fun uploadFile(
+        user: Driver,
+        fileUri: Uri,
+        result: (UiState<String>) -> Unit
+    ) {
         try {
-            fileRef.putFile(fileUri).await()
-            result.invoke(UiState.Success("File uploaded successfully"))
+            val fileRef = storage.reference.child("files/${user.email}.jpg")
+
+            val listResult = fileRef.parent?.listAll()?.await()
+            val oldFile = listResult?.items?.firstOrNull()
+
+            if (oldFile == null) {
+                fileRef.putFile(fileUri).await()
+                result.invoke(UiState.Success("File uploaded successfully"))
+            } else {
+                oldFile.delete().await()
+                fileRef.putFile(fileUri).await()
+                result.invoke(UiState.Success("File uploaded successfully"))
+            }
         } catch (e: Exception) {
             result.invoke(UiState.Failure("Error uploading file: ${e.localizedMessage}"))
         }
     }
+
 
 }
 

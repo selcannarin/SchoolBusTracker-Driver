@@ -28,4 +28,9 @@ interface StudentRepository {
         studentNumbers: List<Int>,
         result: (UiState<List<Int>>) -> Unit
     )
+
+    suspend fun getFCMTokenByStudentNumber(
+        studentNumber: Int,
+        result: (UiState<String?>) -> Unit
+    )
 }

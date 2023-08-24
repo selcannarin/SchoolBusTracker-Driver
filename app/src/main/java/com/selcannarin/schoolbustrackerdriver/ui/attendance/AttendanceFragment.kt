@@ -14,26 +14,35 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
 import com.selcannarin.schoolbustrackerdriver.R
 import com.selcannarin.schoolbustrackerdriver.data.model.Driver
+import com.selcannarin.schoolbustrackerdriver.data.model.NotificationData
+import com.selcannarin.schoolbustrackerdriver.data.model.PushNotification
 import com.selcannarin.schoolbustrackerdriver.data.model.Student
+import com.selcannarin.schoolbustrackerdriver.data.notification.MyFirebaseMessagingService.Companion.token
+import com.selcannarin.schoolbustrackerdriver.data.notification.RetrofitInstance
 import com.selcannarin.schoolbustrackerdriver.databinding.FragmentAttendanceBinding
 import com.selcannarin.schoolbustrackerdriver.ui.MainActivity
 import com.selcannarin.schoolbustrackerdriver.ui.auth.AuthViewModel
 import com.selcannarin.schoolbustrackerdriver.ui.profile.ProfileViewModel
 import com.selcannarin.schoolbustrackerdriver.util.UiState
 import dagger.hilt.android.AndroidEntryPoint
-
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AttendanceFragment : Fragment() {
 
     private lateinit var binding: FragmentAttendanceBinding
-    lateinit var adapter: AttendanceAdapter
+    private lateinit var adapter: AttendanceAdapter
     private val authViewModel: AuthViewModel by viewModels()
     private val profileViewModel: ProfileViewModel by viewModels()
     private val attendanceViewModel: AttendanceViewModel by viewModels()
     private val driverLiveData: MutableLiveData<Driver> = MutableLiveData()
+    val TAG = "Attendance"
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -45,7 +54,6 @@ class AttendanceFragment : Fragment() {
         binding.attendanceRv.layoutManager = LinearLayoutManager(requireContext())
         return binding.root
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -163,6 +171,13 @@ class AttendanceFragment : Fragment() {
                 when (goingAttendanceList) {
                     is UiState.Success -> {
                         val studentNumberList = goingAttendanceList.data
+                        val absentStudentList = getAbsentStudentList(studentNumberList)
+
+                        setNotificationDetails(
+                            absentStudentList,
+                            "The student did not get on the outgoing bus. If you are aware, ignore this message.",
+                            "Absent Student - School Bus Tracker"
+                        )
                         Toast.makeText(
                             requireContext(),
                             "Going Attendance List saved successfully!",
@@ -188,12 +203,18 @@ class AttendanceFragment : Fragment() {
                 when (returnAttendanceList) {
                     is UiState.Success -> {
                         val studentNumberList = returnAttendanceList.data
+                        val absentStudentList = getAbsentStudentList(studentNumberList)
+
+                        setNotificationDetails(
+                            absentStudentList,
+                            "The student did not take the return bus. If you are aware, ignore this message.",
+                            "Absent Student - School Bus Tracker"
+                        )
                         Toast.makeText(
                             requireContext(),
                             "Return Attendance List saved successfully!",
                             Toast.LENGTH_SHORT
                         ).show()
-                        Log.e("return", studentNumberList.toString())
                         clearCheckBoxes()
                     }
 
@@ -201,7 +222,6 @@ class AttendanceFragment : Fragment() {
                 }
             }
         }
-
     }
 
     private fun clearCheckBoxes() {
@@ -249,6 +269,69 @@ class AttendanceFragment : Fragment() {
         }
     }
 
+    private fun getAbsentStudentList(studentList: List<Int>): List<Int> {
+        val absentStudents = mutableListOf<Int>()
+        driverLiveData.observe(viewLifecycleOwner) { driver ->
+            val driverStudentNumbers = driver.students
+            if (driverStudentNumbers != null) {
+                for (studentNumber in driverStudentNumbers) {
+                    if (!studentList.contains(studentNumber)) {
+                        absentStudents.add(studentNumber)
+                    }
+                }
+            }
+        }
+        return absentStudents
+    }
+
+    private fun setNotificationDetails(studentList: List<Int>, message: String, title: String) {
+        for (studentNumber in studentList) {
+            attendanceViewModel.getFCMTokenByStudentNumber(studentNumber)
+            attendanceViewModel.getFCMToken.observe(viewLifecycleOwner) { fcmToken ->
+                when (fcmToken) {
+                    is UiState.Success -> {
+                        token = fcmToken.data
+                        token?.let { parentToken ->
+                            val notificationTitle = title
+                            val notificationMessage = message
+                            PushNotification(
+                                NotificationData(
+                                    notificationTitle,
+                                    notificationMessage
+                                ),
+                                parentToken
+                            ).also {
+                                sendNotification(it)
+                            }
+                        }
+
+                    }
+
+                    is UiState.Loading -> {
+                        Log.d(TAG, "Setting notification details.")
+                    }
+
+                    is UiState.Failure -> {
+                        Log.e(TAG, "Failed to set notification details.")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun sendNotification(notification: PushNotification) =
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = RetrofitInstance.api.postNotification(notification)
+                if (response.isSuccessful) {
+                    Log.d(TAG, "Response: ${Gson().toJson(response)}")
+                } else {
+                    Log.e(TAG, response.errorBody().toString())
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, e.toString())
+            }
+        }
 
 }
 
