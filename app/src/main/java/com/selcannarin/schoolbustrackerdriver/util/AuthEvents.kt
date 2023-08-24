@@ -1,4 +1,4 @@
-package com.selcannarin.schoolbustrackerdriver.data.remote
+package com.selcannarin.schoolbustrackerdriver.util
 
 sealed class AuthEvents {
     data class Message(val message: String) : AuthEvents()

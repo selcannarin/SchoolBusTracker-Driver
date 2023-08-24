@@ -14,7 +14,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.selcannarin.schoolbustrackerdriver.R
 import com.selcannarin.schoolbustrackerdriver.data.model.Driver
-import com.selcannarin.schoolbustrackerdriver.data.remote.AuthEvents
+import com.selcannarin.schoolbustrackerdriver.util.AuthEvents
 import com.selcannarin.schoolbustrackerdriver.databinding.FragmentProfileBinding
 import com.selcannarin.schoolbustrackerdriver.ui.MainActivity
 import com.selcannarin.schoolbustrackerdriver.ui.auth.AuthViewModel

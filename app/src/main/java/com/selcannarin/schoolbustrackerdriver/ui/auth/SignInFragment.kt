@@ -12,7 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.selcannarin.schoolbustrackerdriver.R
-import com.selcannarin.schoolbustrackerdriver.data.remote.AuthEvents
+import com.selcannarin.schoolbustrackerdriver.util.AuthEvents
 import com.selcannarin.schoolbustrackerdriver.databinding.FragmentSignInBinding
 import com.selcannarin.schoolbustrackerdriver.ui.MainActivity
 import dagger.hilt.android.AndroidEntryPoint

@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
 import com.selcannarin.schoolbustrackerdriver.data.model.Driver
-import com.selcannarin.schoolbustrackerdriver.data.remote.AuthEvents
+import com.selcannarin.schoolbustrackerdriver.util.AuthEvents
 import com.selcannarin.schoolbustrackerdriver.data.repository.auth.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
