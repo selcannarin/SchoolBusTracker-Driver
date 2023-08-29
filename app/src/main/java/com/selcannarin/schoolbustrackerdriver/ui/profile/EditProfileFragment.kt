@@ -85,7 +85,7 @@ class EditProfileFragment : Fragment() {
         }
 
         binding.licensePlateIcon.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK)
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = "*/*"
             startActivityForResult(intent, PICK_FILE_REQUEST)
         }
