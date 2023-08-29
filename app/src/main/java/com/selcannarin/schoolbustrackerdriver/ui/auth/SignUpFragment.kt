@@ -49,6 +49,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
         binding?.apply {
             buttonSignUp.setOnClickListener {
                 val driverName = editTextDriverName.text.toString()
+                val driverPhone = editTextDriverPhone.text.toString()
                 val licensePlate = editTextLicensePlate.text.toString()
                 val email = editTextEmail.text.toString()
                 val password = editTextPassword.text.toString()
@@ -56,6 +57,11 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
                 if (driverName.isEmpty()) {
                     editTextDriverName.error = "Driver Name should not be empty"
+                    return@setOnClickListener
+                }
+
+                if (driverPhone.isEmpty()) {
+                    editTextDriverPhone.error = "Driver Phone should not be empty"
                     return@setOnClickListener
                 }
 
@@ -85,7 +91,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                 }
 
                 viewModel.signUpUser(email, password, confirmPassword)
-                val driver = Driver(email, driverName, licensePlate)
+                val driver = Driver(email, driverName, licensePlate,null, driverPhone.toLong())
 
                 viewModel.currentUser.observe(viewLifecycleOwner) { firebaseUser ->
                     if (firebaseUser != null) {

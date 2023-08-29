@@ -58,8 +58,9 @@ class ProfileFragment : Fragment() {
             val name = binding.userProfileName.text.toString()
             val mail = binding.userEmail.text.toString()
             val license = binding.licensePlateText.text.toString()
+            val phone = binding.phoneText.text.toString()
             findNavController().navigate(
-                R.id.editProfileFragment, EditProfileFragmentArgs(name, license, mail).toBundle()
+                R.id.editProfileFragment, EditProfileFragmentArgs(name, license, mail, phone).toBundle()
             )
         }
     }
@@ -96,7 +97,8 @@ class ProfileFragment : Fragment() {
                 val fullName = ""
                 val licensePlate = ""
                 val students: List<Int> = emptyList()
-                profileViewModel.getDriver(Driver(email, fullName, licensePlate, students))
+                val phone: Long? = null
+                profileViewModel.getDriver(Driver(email, fullName, licensePlate, students, phone))
                 profileViewModel.driver.observe(viewLifecycleOwner) { driverState ->
                     when (driverState) {
                         is UiState.Success -> {
@@ -105,6 +107,7 @@ class ProfileFragment : Fragment() {
                                 userProfileName.text = driver.fullName
                                 licensePlateText.text = driver.licensePlate
                                 userEmail.text = driver.email
+                                phoneText.text = driver.phone.toString()
 
                                 val imageref =
                                     Firebase.storage.reference.child("photos/${driver.email}.jpg")

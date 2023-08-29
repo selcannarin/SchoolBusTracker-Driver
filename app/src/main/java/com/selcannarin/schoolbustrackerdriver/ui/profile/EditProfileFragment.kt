@@ -47,10 +47,12 @@ class EditProfileFragment : Fragment() {
         val fullName = args.fullName
         val email = args.email
         val licensePlate = args.licensePlate
+        val phone = args.phone
 
         binding.editTextUserProfileName.setText(fullName)
         binding.textViewUserEmail.text = email
         binding.editTextLicensePlate.setText(licensePlate)
+        binding.editTextPhone.setText(phone)
 
         val imageref =
             Firebase.storage.reference.child("photos/${email}.jpg")
@@ -98,8 +100,9 @@ class EditProfileFragment : Fragment() {
 
                 val fullName = binding.editTextUserProfileName.text.toString()
                 val licensePlate = binding.editTextLicensePlate.text.toString()
+                val phone = binding.editTextPhone.text.toString().toLong()
 
-                val updatedDriver = Driver(userEmail, fullName, licensePlate, students)
+                val updatedDriver = Driver(userEmail, fullName, licensePlate, students, phone)
 
                 profileViewModel.editDriver(updatedDriver)
 
