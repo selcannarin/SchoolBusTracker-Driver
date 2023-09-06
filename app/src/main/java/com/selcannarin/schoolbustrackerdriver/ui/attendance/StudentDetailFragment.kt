@@ -36,8 +36,8 @@ class StudentDetailFragment : Fragment() {
         binding = FragmentStudentDetailBinding.bind(view)
         (activity as MainActivity).setBottomNavVisibilityVisible()
 
-        val toolbar = (activity as AppCompatActivity).supportActionBar
-        toolbar?.title = "Student Detail"
+        (requireActivity() as MainActivity).setToolbarTitle("Student Detail")
+        (activity as MainActivity).showNavigationDrawer()
     }
 
     override fun onCreateView(
@@ -46,7 +46,7 @@ class StudentDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentStudentDetailBinding.inflate(inflater)
-
+        (activity as MainActivity).showNavigationDrawer()
         val name = args.studentName
         val parent_phone = args.studentParentPhone
         val number = args.studentNumber

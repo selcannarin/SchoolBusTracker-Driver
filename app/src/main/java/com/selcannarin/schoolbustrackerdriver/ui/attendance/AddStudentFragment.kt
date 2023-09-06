@@ -13,6 +13,7 @@ import com.selcannarin.schoolbustrackerdriver.R
 import com.selcannarin.schoolbustrackerdriver.data.model.Driver
 import com.selcannarin.schoolbustrackerdriver.data.model.Student
 import com.selcannarin.schoolbustrackerdriver.databinding.FragmentAddStudentBinding
+import com.selcannarin.schoolbustrackerdriver.ui.MainActivity
 import com.selcannarin.schoolbustrackerdriver.ui.auth.AuthViewModel
 import com.selcannarin.schoolbustrackerdriver.ui.profile.ProfileViewModel
 import com.selcannarin.schoolbustrackerdriver.util.UiState
@@ -29,8 +30,9 @@ class AddStudentFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentAddStudentBinding.bind(view)
-        val toolbar = (activity as AppCompatActivity).supportActionBar
-        toolbar?.title = "Add Student"
+
+        (requireActivity() as MainActivity).setToolbarTitle("Add Student")
+        (activity as MainActivity).showNavigationDrawer()
 
         setupListeners()
     }
@@ -41,7 +43,7 @@ class AddStudentFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentAddStudentBinding.inflate(inflater)
-
+        (activity as MainActivity).showNavigationDrawer()
         return binding.root
     }
 

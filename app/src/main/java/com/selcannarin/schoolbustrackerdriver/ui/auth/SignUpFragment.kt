@@ -29,8 +29,8 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentSignUpBinding.bind(view)
         (activity as MainActivity).setBottomNavVisibilityGone()
-        val toolbar = (activity as AppCompatActivity).supportActionBar
-        toolbar?.title = "Sign Up"
+        (requireActivity() as MainActivity).hideNavigationDrawer()
+        (requireActivity() as MainActivity).setToolbarTitle("Sign Up")
     }
 
     override fun onCreateView(
@@ -40,6 +40,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
     ): View? {
         _binding = FragmentSignUpBinding.inflate(inflater, container, false)
         (activity as MainActivity).setBottomNavVisibilityGone()
+        (requireActivity() as MainActivity).hideNavigationDrawer()
         setupListeners()
         listenToChannels()
         return binding?.root

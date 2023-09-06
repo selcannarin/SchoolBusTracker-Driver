@@ -43,7 +43,7 @@ class EditProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentEditProfileBinding.inflate(inflater, container, false)
-
+        (activity as MainActivity).showNavigationDrawer()
         val fullName = args.fullName
         val email = args.email
         val licensePlate = args.licensePlate
@@ -72,8 +72,9 @@ class EditProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentEditProfileBinding.bind(view)
         (activity as MainActivity).setBottomNavVisibilityGone()
-        val toolbar = (activity as AppCompatActivity).supportActionBar
-        toolbar?.title = "Edit Profile"
+
+        (requireActivity() as MainActivity).setToolbarTitle("Edit Profile")
+        (activity as MainActivity).showNavigationDrawer()
 
 
     }

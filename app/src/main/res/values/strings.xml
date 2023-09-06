@@ -7,4 +7,11 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="location">location</string>
+    <string name="menu_profile">Profile</string>
+    <string name="menu_attendanceList">Attendance List</string>
+    <string name="menu_addStudent">Add Student</string>
+    <string name="menu_location">Location</string>
+    <string name="menu_signOut">Sign Out</string>
+    <string name="open">Open Drawer</string>
+    <string name="close">Close Drawer</string>
 </resources>

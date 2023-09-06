@@ -28,8 +28,8 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentResetPasswordBinding.bind(view)
         (activity as MainActivity).setBottomNavVisibilityGone()
-        val toolbar = (activity as AppCompatActivity).supportActionBar
-        toolbar?.title = "Reset Password"
+        (requireActivity() as MainActivity).hideNavigationDrawer()
+        (requireActivity() as MainActivity).setToolbarTitle("Reset Password")
     }
 
     override fun onCreateView(
@@ -39,6 +39,7 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
     ): View? {
         _binding = FragmentResetPasswordBinding.inflate(inflater, container, false)
         (activity as MainActivity).setBottomNavVisibilityGone()
+        (requireActivity() as MainActivity).hideNavigationDrawer()
         setUpWidgets()
         listenToChannels()
         return binding?.root

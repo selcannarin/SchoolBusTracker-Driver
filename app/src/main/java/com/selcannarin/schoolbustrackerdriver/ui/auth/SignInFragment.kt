@@ -30,8 +30,7 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentSignInBinding.bind(view)
-        val toolbar = (activity as AppCompatActivity).supportActionBar
-        toolbar?.title = "Sign In"
+        (requireActivity() as MainActivity).setToolbarTitle("Sign In")
     }
 
     override fun onCreateView(
@@ -116,6 +115,7 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
     override fun onResume() {
         super.onResume()
         (requireActivity() as MainActivity).setBottomNavVisibilityGone()
+        (requireActivity() as MainActivity).hideNavigationDrawer()
     }
 
 

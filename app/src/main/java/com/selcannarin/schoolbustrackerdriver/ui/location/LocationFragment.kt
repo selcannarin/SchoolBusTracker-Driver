@@ -5,11 +5,9 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -61,8 +59,9 @@ class LocationFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         _binding = FragmentLocationBinding.bind(view)
         (activity as MainActivity).setBottomNavVisibilityVisible()
-        val toolbar = (activity as AppCompatActivity).supportActionBar
-        toolbar?.title = "Location"
+
+        (requireActivity() as MainActivity).setToolbarTitle("Location")
+        (activity as MainActivity).showNavigationDrawer()
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
         mapFragment?.getMapAsync(this)
@@ -78,6 +77,7 @@ class LocationFragment : Fragment(), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentLocationBinding.inflate(inflater, container, false)
+        (activity as MainActivity).showNavigationDrawer()
         return binding?.root
     }
 
@@ -164,7 +164,6 @@ class LocationFragment : Fragment(), OnMapReadyCallback {
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.custom_marker_driver_icon))
                 .title("Driver Location")
         )
-        Log.e("ses", "marker ekleniyor.")
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15f))
     }
 

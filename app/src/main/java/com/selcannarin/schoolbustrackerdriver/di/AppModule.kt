@@ -1,5 +1,6 @@
 package com.selcannarin.schoolbustrackerdriver.di
 
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.selcannarin.schoolbustrackerdriver.data.datasource.auth.AuthDataSource
@@ -28,6 +29,11 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+    @Singleton
+    @Provides
+    fun provideAuth(): FirebaseAuth {
+        return FirebaseAuth.getInstance()
+    }
     @Singleton
     @Provides
     fun provideAuthenticator(firestore: FirebaseFirestore): AuthDataSource {
