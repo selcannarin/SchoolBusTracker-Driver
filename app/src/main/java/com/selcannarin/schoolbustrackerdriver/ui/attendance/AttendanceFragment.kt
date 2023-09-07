@@ -143,6 +143,10 @@ class AttendanceFragment : Fragment() {
         adapter = AttendanceAdapter(studentList) { student ->
             goToStudentDetail(student)
         }
+        if(adapter.itemCount == 0){
+            binding.progressCircular.visibility = View.GONE
+            binding.textViewNoStudent.text = "There no student. Please add student."
+        }
         binding.attendanceRv.adapter = adapter
     }
 
