@@ -6,26 +6,33 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
 import com.selcannarin.schoolbustrackerdriver.R
-import com.selcannarin.schoolbustrackerdriver.util.AuthEvents
 import com.selcannarin.schoolbustrackerdriver.databinding.FragmentSignInBinding
 import com.selcannarin.schoolbustrackerdriver.ui.MainActivity
+import com.selcannarin.schoolbustrackerdriver.util.AuthEvents
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class SignInFragment : Fragment(R.layout.fragment_sign_in) {
 
+    @Inject
+    lateinit var firebaseAuth: FirebaseAuth
+
+    private var authStateListener: FirebaseAuth.AuthStateListener? = null
+
     private val viewModel: AuthViewModel by activityViewModels()
     private var _binding: FragmentSignInBinding? = null
     private val binding get() = _binding
     private val TAG = "SignInFragment"
+    private var isNavigationPerformed = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -88,7 +95,8 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
                     }
 
                     is AuthEvents.Message -> {
-                        if (event.message == "login success") {
+                        if (event.message == "login success" && !isNavigationPerformed) {
+                            isNavigationPerformed = true
                             findNavController().navigate(R.id.action_signInFragment_to_attendanceFragment)
                         }
                     }
@@ -112,12 +120,34 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
         }
     }
 
+    private fun startAuthStateListener() {
+        if (authStateListener == null) {
+            authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+                Log.i("firebase", "AuthState changed to ${firebaseAuth.currentUser?.uid}")
+                if (firebaseAuth.currentUser != null && !isNavigationPerformed) {
+                    isNavigationPerformed = true
+                    findNavController().navigate(R.id.action_signInFragment_to_attendanceFragment)
+                }
+            }
+            firebaseAuth.addAuthStateListener(authStateListener!!)
+        }
+    }
+
+    private fun stopAuthStateListener() {
+        authStateListener?.let { firebaseAuth.removeAuthStateListener(it) }
+    }
+
     override fun onResume() {
         super.onResume()
+        startAuthStateListener()
         (requireActivity() as MainActivity).setBottomNavVisibilityGone()
         (requireActivity() as MainActivity).hideNavigationDrawer()
     }
 
+    override fun onPause() {
+        super.onPause()
+        stopAuthStateListener()
+    }
 
     override fun onDestroy() {
         super.onDestroy()
