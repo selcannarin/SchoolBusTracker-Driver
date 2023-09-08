@@ -110,7 +110,7 @@ class ProfileFragment : Fragment() {
                                 phoneText.text = driver.phone.toString()
 
                                 val imageref =
-                                    Firebase.storage.reference.child("photos/${driver.email}.jpg")
+                                    Firebase.storage.reference.child("photos/${driver.email}")
                                 imageref.downloadUrl.addOnSuccessListener { uri ->
                                     val imageURL = uri.toString()
                                     imageViewUserImage.loadUrl(imageURL)

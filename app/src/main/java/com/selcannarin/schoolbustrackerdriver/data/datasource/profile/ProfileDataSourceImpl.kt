@@ -54,10 +54,11 @@ class ProfileDataSourceImpl @Inject constructor(
 
     override suspend fun addPhoto(user: Driver, photoUri: Uri, result: (UiState<String>) -> Unit) {
         try {
-            val photoRef = storage.reference.child("photos/${user.email}.jpg")
+            val photoName = "${user.email}"
+            val photoRef = storage.reference.child("photos/$photoName")
 
             val listResult = photoRef.parent?.listAll()?.await()
-            val oldPhoto = listResult?.items?.firstOrNull()
+            val oldPhoto = listResult?.items?.firstOrNull { it.name == photoName }
 
             if (oldPhoto == null) {
                 photoRef.putFile(photoUri).await()
@@ -78,10 +79,11 @@ class ProfileDataSourceImpl @Inject constructor(
         result: (UiState<String>) -> Unit
     ) {
         try {
-            val fileRef = storage.reference.child("files/${user.email}.jpg")
+            val fileName = "${user.email}"
+            val fileRef = storage.reference.child("files/$fileName")
 
             val listResult = fileRef.parent?.listAll()?.await()
-            val oldFile = listResult?.items?.firstOrNull()
+            val oldFile = listResult?.items?.firstOrNull { it.name == fileName }
 
             if (oldFile == null) {
                 fileRef.putFile(fileUri).await()

@@ -5,10 +5,10 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
@@ -37,6 +37,9 @@ class EditProfileFragment : Fragment() {
     private var selectedFileUri: Uri? = null
     private val driverLiveData: MutableLiveData<Driver> = MutableLiveData()
     private val args: EditProfileFragmentArgs by navArgs()
+    private var isPhotoUploaded = false
+    private var isFileUploaded = false
+    val TAG = "EditProfileFragment"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,7 +58,7 @@ class EditProfileFragment : Fragment() {
         binding.editTextPhone.setText(phone)
 
         val imageref =
-            Firebase.storage.reference.child("photos/${email}.jpg")
+            Firebase.storage.reference.child("photos/${email}")
         imageref.downloadUrl.addOnSuccessListener { Uri ->
             val imageURL = Uri.toString()
             binding.imageViewUserImage.loadUrl(imageURL)
@@ -109,13 +112,19 @@ class EditProfileFragment : Fragment() {
 
                 if (selectedImageUri != null) {
                     showPhotoConfirmationDialog(updatedDriver, selectedImageUri!!)
+                } else {
+                    isPhotoUploaded = true
                 }
 
                 if (selectedFileUri != null) {
                     showFileConfirmationDialog(updatedDriver, selectedFileUri!!)
+                } else {
+                    isFileUploaded = true
                 }
+
+                checkUploadStatus()
+
             }
-            findNavController().navigate(R.id.action_editProfileFragment_to_profileFragment)
         }
 
     }
@@ -161,12 +170,26 @@ class EditProfileFragment : Fragment() {
         }
     }
 
+    private fun checkUploadStatus() {
+        if (isPhotoUploaded && isFileUploaded) {
+            findNavController().navigate(R.id.action_editProfileFragment_to_profileFragment)
+        }
+    }
+
     private fun showFileConfirmationDialog(driver: Driver, fileUri: Uri) {
         val alertDialog = AlertDialog.Builder(requireContext())
         alertDialog.setTitle("Upload File")
         alertDialog.setMessage("Are you sure you want to upload the file??")
         alertDialog.setPositiveButton("Yes") { _, _ ->
             profileViewModel.uploadFile(driver, fileUri)
+            profileViewModel.uploadFile.observe(viewLifecycleOwner) { result ->
+                if (result is UiState.Success) {
+                    isFileUploaded = true
+                    checkUploadStatus()
+                } else {
+                    Log.e(TAG, "Failed to upload file.")
+                }
+            }
         }
         alertDialog.setNegativeButton("No") { _, _ ->
 
@@ -180,6 +203,14 @@ class EditProfileFragment : Fragment() {
         alertDialog.setMessage("Are you sure about choosing it as your profile photo?")
         alertDialog.setPositiveButton("Yes") { _, _ ->
             profileViewModel.addPhoto(driver, photoUri)
+            profileViewModel.addPhoto.observe(viewLifecycleOwner) { result ->
+                if (result is UiState.Success) {
+                    isPhotoUploaded = true
+                    checkUploadStatus()
+                } else {
+                    Log.e(TAG, "Failed to upload photo.")
+                }
+            }
         }
         alertDialog.setNegativeButton("No") { _, _ ->
 
