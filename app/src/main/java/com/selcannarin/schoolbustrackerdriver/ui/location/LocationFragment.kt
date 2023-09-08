@@ -25,6 +25,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.inappmessaging.ktx.inAppMessaging
@@ -60,6 +61,7 @@ class LocationFragment : Fragment(), OnMapReadyCallback {
     private lateinit var locationTimer: Timer
     private var currentUserMarker: Marker? = null
     private val driverLiveData: MutableLiveData<Driver> = MutableLiveData()
+    private val allMarkers: MutableList<Marker> = mutableListOf()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         _binding = FragmentLocationBinding.bind(view)
@@ -101,6 +103,18 @@ class LocationFragment : Fragment(), OnMapReadyCallback {
             true
         }
     }
+
+    private fun showAllMarkers() {
+        val builder = LatLngBounds.Builder()
+        for (marker in allMarkers) {
+            builder.include(marker.position)
+        }
+        val bounds = builder.build()
+        val padding = 150
+        val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
+        googleMap.moveCamera(cameraUpdate)
+    }
+
 
     private fun openLocationInGoogleMapsOrBrowser(latitude: Double, longitude: Double) {
         val uri = "geo:$latitude,$longitude"
@@ -210,7 +224,8 @@ class LocationFragment : Fragment(), OnMapReadyCallback {
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.custom_marker_driver_icon))
                 .title("Driver Location")
         )
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15f))
+        currentUserMarker?.let { allMarkers.add(it) }
+        showAllMarkers()
     }
 
     private fun getDriverLocation(callback: (Location?) -> Unit) {
@@ -271,21 +286,17 @@ class LocationFragment : Fragment(), OnMapReadyCallback {
                 studentInfo.student_address
             )
             location?.let {
-                googleMap.addMarker(
+                val marker = googleMap.addMarker(
                     MarkerOptions().position(location).title(studentInfo.student_name).icon(
                         BitmapDescriptorFactory.fromResource(R.drawable.custom_marker_student_icon)
                     )
                 )
+                if (marker != null) {
+                    allMarkers.add(marker)
+                }
             }
         }
-
-        val firstLocation = locationViewModel.getLocationFromAddress(
-            requireContext(),
-            studentList.firstOrNull()?.student_address ?: ""
-        )
-        firstLocation?.let {
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(it, 15f))
-        }
+        showAllMarkers()
     }
 
     override fun onResume() {
