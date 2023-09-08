@@ -1,13 +1,16 @@
 package com.selcannarin.schoolbustrackerdriver.ui.location
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -90,7 +93,48 @@ class LocationFragment : Fragment(), OnMapReadyCallback {
         driverLiveData.observe(viewLifecycleOwner) { driver ->
             startLocationUpdates(driver)
         }
+
+        googleMap.setOnMarkerClickListener { marker ->
+            val latitude = marker.position.latitude
+            val longitude = marker.position.longitude
+            openLocationInGoogleMapsOrBrowser(latitude, longitude)
+            true
+        }
     }
+
+    private fun openLocationInGoogleMapsOrBrowser(latitude: Double, longitude: Double) {
+        val uri = "geo:$latitude,$longitude"
+        val mapIntent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+        mapIntent.setPackage("com.google.android.apps.maps")
+        if (mapIntent.resolveActivity(requireContext().packageManager) != null) {
+            getDriverLocation { driverLoc ->
+                if (driverLoc != null) {
+                    val directionsUri =
+                        "http://maps.google.com/maps?saddr=${driverLoc.latitude},${driverLoc.longitude}&daddr=$latitude,$longitude"
+                    val directionsIntent = Intent(Intent.ACTION_VIEW, Uri.parse(directionsUri))
+                    startActivity(directionsIntent)
+                }
+            }
+        } else {
+            getDriverLocation { driverLoc ->
+                if (driverLoc != null) {
+                    val webUri =
+                        "http://maps.google.com/maps?saddr=${driverLoc.latitude},${driverLoc.longitude}&daddr=$latitude,$longitude"
+                    val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(webUri))
+                    if (webIntent.resolveActivity(requireContext().packageManager) != null) {
+                        startActivity(webIntent)
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Couldn't find Google Maps or a web browser.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun enableMyLocation() {
         if (ContextCompat.checkSelfPermission(
