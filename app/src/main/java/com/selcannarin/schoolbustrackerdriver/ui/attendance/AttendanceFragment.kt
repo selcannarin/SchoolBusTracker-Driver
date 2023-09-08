@@ -189,7 +189,6 @@ class AttendanceFragment : Fragment() {
                             Toast.LENGTH_SHORT
                         ).show()
                         Log.e("going", studentNumberList.toString())
-                        //clearCheckBoxes()
                     }
 
                     else -> {}
@@ -220,7 +219,7 @@ class AttendanceFragment : Fragment() {
                             "Return Attendance List saved successfully!",
                             Toast.LENGTH_SHORT
                         ).show()
-                        //clearCheckBoxes()
+
                     }
 
                     else -> {}
@@ -228,15 +227,6 @@ class AttendanceFragment : Fragment() {
             }
         }
     }
-
-    /* private fun clearCheckBoxes() {
-         for (i in 0 until binding.attendanceRv.adapter?.itemCount!!) {
-             val viewHolder =
-                 binding.attendanceRv.findViewHolderForAdapterPosition(i) as AttendanceAdapter.ViewHolder
-             val checkBox = viewHolder.itemView.findViewById<CheckBox>(R.id.attendance_checkBox)
-             checkBox.isChecked = false
-         }
-     }*/
 
     private fun getStudentAttendanceList(): List<Int> {
         val selectedStudents = mutableListOf<Int>()
