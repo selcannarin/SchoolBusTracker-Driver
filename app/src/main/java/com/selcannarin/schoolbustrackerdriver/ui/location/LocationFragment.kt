@@ -24,6 +24,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.inappmessaging.ktx.inAppMessaging
+import com.google.firebase.ktx.Firebase
 import com.selcannarin.schoolbustrackerdriver.R
 import com.selcannarin.schoolbustrackerdriver.data.model.Driver
 import com.selcannarin.schoolbustrackerdriver.data.model.Location
@@ -240,6 +242,11 @@ class LocationFragment : Fragment(), OnMapReadyCallback {
         firstLocation?.let {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(it, 15f))
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Firebase.inAppMessaging.triggerEvent("student_locations")
     }
 
     override fun onDestroyView() {

@@ -55,6 +55,9 @@ dependencies {
     //Location services
     implementation 'com.google.android.gms:play-services-location:21.0.1'
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    //Firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.2.3"))
+    implementation("com.google.firebase:firebase-analytics-ktx")
     //Firebase firestore
     implementation 'com.google.firebase:firebase-firestore-ktx:24.7.0'
     //Firebase auth
@@ -63,6 +66,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage-ktx:20.2.1'
     //Firebase messaging
     implementation 'com.google.firebase:firebase-messaging-ktx:23.2.1'
+    implementation 'com.google.firebase:firebase-inappmessaging-display-ktx'
     //Hilt
     implementation 'com.google.dagger:hilt-android:2.44'
     kapt 'com.google.dagger:hilt-compiler:2.44'
