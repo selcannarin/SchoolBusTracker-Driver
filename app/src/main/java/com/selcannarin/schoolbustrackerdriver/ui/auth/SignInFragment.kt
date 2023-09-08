@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -48,9 +47,6 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
         _binding = FragmentSignInBinding.inflate(inflater, container, false)
         setupListeners()
         listenToChannels()
-        requireActivity().onBackPressedDispatcher.addCallback(this) {
-            requireActivity().finish()
-        }
         return binding?.root
     }
 

@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
@@ -62,7 +62,7 @@ class AttendanceFragment : Fragment() {
 
         (requireActivity() as MainActivity).setToolbarTitle("Student Attendance")
         (activity as MainActivity).showNavigationDrawer()
-
+        onBackPressed()
         checkUser()
         saveStudentAttendanceList()
 
@@ -143,7 +143,7 @@ class AttendanceFragment : Fragment() {
         adapter = AttendanceAdapter(studentList) { student ->
             goToStudentDetail(student)
         }
-        if(adapter.itemCount == 0){
+        if (adapter.itemCount == 0) {
             binding.progressCircular.visibility = View.GONE
             binding.textViewNoStudent.text = "There no student. Please add student."
         }
@@ -190,128 +190,127 @@ class AttendanceFragment : Fragment() {
                         ).show()
                         Log.e("going", studentNumberList.toString())
                         //clearCheckBoxes()
-                                }
-
-                                else -> {}
-                            }
-                        }
                     }
 
+                    else -> {}
                 }
+            }
+        }
 
-                private fun onReturnButtonClicked() {
-                    driverLiveData.observe(viewLifecycleOwner) { driver ->
-                        val userEmail = driver.email
-                        val selectedStudents = getStudentAttendanceList()
-                        attendanceViewModel.saveReturnAttendanceList(userEmail, selectedStudents)
-                        attendanceViewModel.returnAttendanceList.observe(viewLifecycleOwner) { returnAttendanceList ->
-                            when (returnAttendanceList) {
-                                is UiState.Success -> {
-                                    val studentNumberList = returnAttendanceList.data
-                                    val absentStudentList = getAbsentStudentList(studentNumberList)
+    }
 
-                                    setNotificationDetails(
-                                        absentStudentList,
-                                        "The student did not take the return bus.",
-                                        "Absent Student - School Bus Tracker"
-                                    )
-                                    Toast.makeText(
-                                        requireContext(),
-                                        "Return Attendance List saved successfully!",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    //clearCheckBoxes()
-                                }
+    private fun onReturnButtonClicked() {
+        driverLiveData.observe(viewLifecycleOwner) { driver ->
+            val userEmail = driver.email
+            val selectedStudents = getStudentAttendanceList()
+            attendanceViewModel.saveReturnAttendanceList(userEmail, selectedStudents)
+            attendanceViewModel.returnAttendanceList.observe(viewLifecycleOwner) { returnAttendanceList ->
+                when (returnAttendanceList) {
+                    is UiState.Success -> {
+                        val studentNumberList = returnAttendanceList.data
+                        val absentStudentList = getAbsentStudentList(studentNumberList)
 
-                                else -> {}
-                            }
-                        }
+                        setNotificationDetails(
+                            absentStudentList,
+                            "The student did not take the return bus.",
+                            "Absent Student - School Bus Tracker"
+                        )
+                        Toast.makeText(
+                            requireContext(),
+                            "Return Attendance List saved successfully!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        //clearCheckBoxes()
+                    }
+
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    /* private fun clearCheckBoxes() {
+         for (i in 0 until binding.attendanceRv.adapter?.itemCount!!) {
+             val viewHolder =
+                 binding.attendanceRv.findViewHolderForAdapterPosition(i) as AttendanceAdapter.ViewHolder
+             val checkBox = viewHolder.itemView.findViewById<CheckBox>(R.id.attendance_checkBox)
+             checkBox.isChecked = false
+         }
+     }*/
+
+    private fun getStudentAttendanceList(): List<Int> {
+        val selectedStudents = mutableListOf<Int>()
+
+        val itemCount = binding.attendanceRv.adapter?.itemCount ?: 0
+        for (i in 0 until itemCount) {
+            val viewHolder =
+                binding.attendanceRv.findViewHolderForAdapterPosition(i) as AttendanceAdapter.ViewHolder
+            val checkBox = viewHolder.itemView.findViewById<CheckBox>(R.id.attendance_checkBox)
+
+            if (checkBox.isChecked) {
+                val studentNumberTextView =
+                    viewHolder.itemView.findViewById<TextView>(R.id.textView_student_number)
+                val studentNumber = studentNumberTextView.text.toString().toInt()
+                selectedStudents.add(studentNumber)
+            }
+        }
+        return selectedStudents
+    }
+
+    private fun saveStudentAttendanceList() {
+        binding.buttonSave.setOnClickListener {
+
+            val isGoingChecked = binding.buttonGoing.isChecked
+            val isReturnChecked = binding.buttonReturn.isChecked
+
+            if (isGoingChecked || isReturnChecked) {
+                if (isGoingChecked) {
+                    onGoingButtonClicked()
+                }
+                if (isReturnChecked) {
+                    onReturnButtonClicked()
+                }
+            }
+        }
+    }
+
+    private fun getAbsentStudentList(studentList: List<Int>): List<Int> {
+        val absentStudents = mutableListOf<Int>()
+        driverLiveData.observe(viewLifecycleOwner) { driver ->
+            val driverStudentNumbers = driver.students
+            if (driverStudentNumbers != null) {
+                for (studentNumber in driverStudentNumbers) {
+                    if (!studentList.contains(studentNumber)) {
+                        absentStudents.add(studentNumber)
                     }
                 }
+            }
+        }
+        return absentStudents
+    }
 
-                /* private fun clearCheckBoxes() {
-                     for (i in 0 until binding.attendanceRv.adapter?.itemCount!!) {
-                         val viewHolder =
-                             binding.attendanceRv.findViewHolderForAdapterPosition(i) as AttendanceAdapter.ViewHolder
-                         val checkBox = viewHolder.itemView.findViewById<CheckBox>(R.id.attendance_checkBox)
-                         checkBox.isChecked = false
-                     }
-                 }*/
-
-                private fun getStudentAttendanceList(): List<Int> {
-                    val selectedStudents = mutableListOf<Int>()
-
-                    val itemCount = binding.attendanceRv.adapter?.itemCount ?: 0
-                    for (i in 0 until itemCount) {
-                        val viewHolder =
-                            binding.attendanceRv.findViewHolderForAdapterPosition(i) as AttendanceAdapter.ViewHolder
-                        val checkBox = viewHolder.itemView.findViewById<CheckBox>(R.id.attendance_checkBox)
-
-                        if (checkBox.isChecked) {
-                            val studentNumberTextView =
-                                viewHolder.itemView.findViewById<TextView>(R.id.textView_student_number)
-                            val studentNumber = studentNumberTextView.text.toString().toInt()
-                            selectedStudents.add(studentNumber)
-                        }
-                    }
-                    return selectedStudents
-                }
-
-                private fun saveStudentAttendanceList() {
-                    binding.buttonSave.setOnClickListener {
-
-                        val isGoingChecked = binding.buttonGoing.isChecked
-                        val isReturnChecked = binding.buttonReturn.isChecked
-
-                        if (isGoingChecked || isReturnChecked) {
-                            if (isGoingChecked) {
-                                onGoingButtonClicked()
-                            }
-                            if (isReturnChecked) {
-                                onReturnButtonClicked()
-                            }
-                        }
-                    }
-                }
-
-                private fun getAbsentStudentList(studentList: List<Int>): List<Int> {
-                    val absentStudents = mutableListOf<Int>()
-                    driverLiveData.observe(viewLifecycleOwner) { driver ->
-                        val driverStudentNumbers = driver.students
-                        if (driverStudentNumbers != null) {
-                            for (studentNumber in driverStudentNumbers) {
-                                if (!studentList.contains(studentNumber)) {
-                                    absentStudents.add(studentNumber)
-                                }
-                            }
-                        }
-                    }
-                    return absentStudents
-                }
-
-                private fun setNotificationDetails(studentList: List<Int>, message: String, title: String) {
-                    for (studentNumber in studentList) {
-                        attendanceViewModel.getFCMTokenByStudentNumber(studentNumber)
-                        attendanceViewModel.getFCMToken.observe(viewLifecycleOwner) { fcmToken ->
-                            when (fcmToken) {
-                                is UiState.Success -> {
-                                    if(fcmToken.data != null) {
-                                        token = fcmToken.data
-                                        token?.let { parentToken ->
-                                            val notificationTitle = title
-                                            val notificationMessage = message
-                                            PushNotification(
-                                                NotificationData(
-                                                    notificationTitle,
-                                                    notificationMessage
-                                                ),
-                                                parentToken
-                                            ).also {
+    private fun setNotificationDetails(studentList: List<Int>, message: String, title: String) {
+        for (studentNumber in studentList) {
+            attendanceViewModel.getFCMTokenByStudentNumber(studentNumber)
+            attendanceViewModel.getFCMToken.observe(viewLifecycleOwner) { fcmToken ->
+                when (fcmToken) {
+                    is UiState.Success -> {
+                        if (fcmToken.data != null) {
+                            token = fcmToken.data
+                            token?.let { parentToken ->
+                                val notificationTitle = title
+                                val notificationMessage = message
+                                PushNotification(
+                                    NotificationData(
+                                        notificationTitle,
+                                        notificationMessage
+                                    ),
+                                    parentToken
+                                ).also {
                                     sendNotification(it)
                                 }
                             }
-                        }
-                        else{
+                        } else {
                             Log.e(TAG, "Null fcm token")
                         }
                     }
@@ -335,7 +334,7 @@ class AttendanceFragment : Fragment() {
             try {
                 val response = RetrofitInstance.api.postNotification(notification)
                 if (response.isSuccessful) {
-                    token=""
+                    token = ""
                     Log.d(TAG, "Response: ${Gson().toJson(response)}")
 
                 } else {
@@ -345,6 +344,12 @@ class AttendanceFragment : Fragment() {
                 Log.e(TAG, e.toString())
             }
         }
+
+    private fun onBackPressed() {
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            requireActivity().finish()
+        }
+    }
 
 }
 
