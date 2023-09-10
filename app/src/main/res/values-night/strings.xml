@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">SchoolBusTrackerDriver</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="google_api_key">AIzaSyDpmCLshOeUcGllKLXDrHKooRQO9VVj1us</string>
+    <string name="google_api_key">YOUR API KEY</string>
     <string name="attendance">attendance</string>
     <string name="profile">profile</string>
     <string name="location">location</string>
